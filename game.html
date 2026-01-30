@@ -45,7 +45,6 @@
       gap: 14px;
     }
 
-    /* ✅ اللوجو يسار أعلى */
     .logo{
       position:absolute;
       top: 16px;
@@ -73,7 +72,6 @@
       white-space:nowrap;
     }
 
-    /* كبسولة اسم اللاعب (اللي فوق الصورة) */
     .namePill{
       margin: 2px auto 6px;
       width: min(520px, 92%);
@@ -92,13 +90,13 @@
     .imgFrame{
       width:min(680px, 96%);
       margin: 6px auto 0;
-      background:#fff;
+      background: #ffffff; /* ✅ */
       border-radius: 26px;
       border: 6px solid rgba(0,0,0,.90);
       box-shadow: 0 18px 26px rgba(0,0,0,.18);
       overflow:hidden;
       position:relative;
-      aspect-ratio: 1.1 / 1; /* قريب من الشكل بالصورة */
+      aspect-ratio: 1.1 / 1;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -119,14 +117,15 @@
       padding: 20px;
     }
 
+    /* ✅ التعديل هنا: عرض كامل بدون قص */
     .imgPreview{
       width:100%;
       height:100%;
-      object-fit: cover;
+      object-fit: contain;              /* بدل cover */
+      background: #ffffff;              /* خلفية داخلية للفراغ */
       display:none;
     }
 
-    /* الأزرار تحت الصورة */
     .belowRow{
       width:min(680px, 96%);
       margin: 10px auto 0;
@@ -172,7 +171,6 @@
       font-size: 34px;
     }
 
-    /* زر الرئيسية: أيقونة منزل صغيرة أسفل يسار */
     .homeBtn{
       position:absolute;
       left: 18px;
@@ -185,7 +183,7 @@
       color:#fff;
       font-size: 30px;
       font-weight: 1000;
-      display:none; /* يظهر للمقدم فقط */
+      display:none;
       align-items:center;
       justify-content:center;
       box-shadow: 0 12px 0 rgba(0,0,0,.22);
@@ -194,28 +192,25 @@
     }
     .homeBtn:active{transform: translateY(3px)}
 
-    /* ✅ الحقوق: أصغر + أسفل يمين (مقابل زر المنزل) */
     .footer{
       position:absolute;
       right: 18px;
-      left: auto;
       bottom: calc(18px + env(safe-area-inset-bottom));
       text-align:right;
       font-weight: 1000;
-      font-size: 14px;   /* أصغر */
+      font-size: 14px;
       white-space: nowrap;
       opacity:.95;
       pointer-events:none;
     }
 
-    /* رسالة صغيرة مخفية (لو احتجنا) */
     .status{
       text-align:center;
       font-weight: 900;
       font-size: 18px;
-      opacity:.0;       /* ✅ مخفية تماماً */
-      height: 0;        /* ✅ ما تاخذ مساحة */
-      overflow:hidden;  /* ✅ */
+      opacity:.0;
+      height: 0;
+      overflow:hidden;
     }
 
     @media (max-width:420px){
@@ -236,23 +231,19 @@
 
     <div id="namePill" class="namePill">...</div>
 
-    <!-- صندوق الصورة -->
     <div id="imgFrame" class="imgFrame" role="button" aria-label="إضافة صورة">
       <div id="placeholder" class="placeholder">انقر هنا لإضافة صورة</div>
       <img id="imgPreview" class="imgPreview" alt="الصورة المختارة" />
     </div>
 
-    <!-- أزرار تحت الصورة -->
     <div class="belowRow">
       <button id="btnRound" class="btn btnRound" type="button" style="display:none;">جولة جديدة</button>
     </div>
 
-    <!-- زر الشراء: يظهر للاعب فقط -->
     <div style="display:flex; justify-content:center; margin-top: 8px;">
       <button id="btnBuy" class="btn btnBuy" type="button" style="display:none;">لشراء اللعبة اضغط هنا</button>
     </div>
 
-    <!-- (مخفية) -->
     <div id="status" class="status"></div>
 
     <div class="footer">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
@@ -260,7 +251,6 @@
     <button id="homeBtn" class="homeBtn" type="button" aria-label="الرئيسية">🏠</button>
   </div>
 
-  <!-- file input مخفي -->
   <input id="fileInput" type="file" accept="image/*" style="display:none;" />
 
   <script type="module">
@@ -299,7 +289,7 @@
     }
 
     const roomId = getRoomId();
-    const role = (getParam("role") || "player").toLowerCase(); // host | player
+    const role = (getParam("role") || "player").toLowerCase();
 
     const namePill = $("namePill");
     const imgFrame = $("imgFrame");
@@ -310,13 +300,11 @@
     const btnBuy = $("btnBuy");
     const homeBtn = $("homeBtn");
 
-    // ✅ إظهار/إخفاء حسب الدور
     const isHost = role === "host";
     btnRound.style.display = isHost ? "inline-block" : "none";
     homeBtn.style.display = isHost ? "flex" : "none";
     btnBuy.style.display = isHost ? "none" : "inline-block";
 
-    // شراء اللعبة للاعب فقط
     btnBuy.addEventListener("click", ()=>{
       window.open("https://sandooq-m.com", "_blank", "noopener,noreferrer");
     });
@@ -329,7 +317,6 @@
 
     const roomRef = doc(db, "khamnRooms", roomId);
 
-    // ====== حالة الصورة المحلية (لا تُرفع نهائياً) ======
     let localUrl = "";
     let imageLocked = false;
     let currentRoundId = "";
@@ -352,10 +339,9 @@
       imgFrame.classList.add("locked");
     }
 
-    // اختيار الصورة: مرة واحدة فقط لكل جولة
     imgFrame.addEventListener("click", ()=>{
       if(!roomId) return;
-      if(imageLocked) return; // ✅ ممنوع تغيير الصورة قبل جولة جديدة
+      if(imageLocked) return;
       fileInput.click();
     });
 
@@ -372,13 +358,11 @@
       lockImage();
     });
 
-    // ====== Firebase Listen ======
     let unsub = null;
 
     async function boot(){
       if(!roomId) return;
 
-      // تأكد الغرفة موجودة
       const snap = await getDoc(roomRef);
       if(!snap.exists()){
         namePill.textContent = "الغرفة غير موجودة";
@@ -392,16 +376,13 @@
         if(!s.exists()) return;
         const d = s.data() || {};
 
-        // الاسم المعروض (نفس كبسولة الاسم)
         const hostName = sanitizeName(d.hostName || "");
         const p2Name = sanitizeName(d.player2Name || "");
 
         namePill.textContent = isHost ? (hostName || "المقدم") : (p2Name || "اللاعب");
 
-        // إنهاء اللعبة/رجوع للوبي
         const stillGame = (d.status === "game" || d.phase === "game" || d.gameStarted === true);
         if(!stillGame){
-          // اقفل التفاعل
           imgFrame.style.pointerEvents = "none";
           if(isHost) btnRound.disabled = true;
           return;
@@ -410,16 +391,14 @@
           if(isHost) btnRound.disabled = false;
         }
 
-        // جولة جديدة = تغيير roundId
         const rid = String(d.roundId || "");
         if(rid && rid !== currentRoundId){
           currentRoundId = rid;
-          clearLocalImage(); // ✅ يمسح الصور عند الطرفين محلياً
+          clearLocalImage();
         }
       });
     }
 
-    // زر جولة جديدة (مقدم فقط)
     btnRound.addEventListener("click", async ()=>{
       if(!isHost || !roomId) return;
       btnRound.disabled = true;
@@ -434,7 +413,6 @@
       setTimeout(()=> btnRound.disabled = false, 400);
     });
 
-    // زر الرئيسية (مقدم فقط): يمسح بيانات الجولات + يرجع للصفحة الرئيسية
     homeBtn.addEventListener("click", async ()=>{
       if(!isHost || !roomId) return;
       try{
@@ -459,4 +437,4 @@
 </body>
 </html>
 
-<!-- اسم النسخة: game.html (تخمين الصور) – إصدار 3 -->
+<!-- اسم النسخة: game.html (تخمين الصور) – إصدار 4 -->
