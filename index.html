@@ -7,29 +7,19 @@
 
   <style>
     :root{
-      --bg1:#4a0f63;
-      --bg2:#6b2b88;
+      /* نفس إحساس الصورة */
+      --page:#7a4a93;
+      --panel:#7a4a93;
+      --inner:#5f2a7a;
 
-      --panel:#6a4a86;
-      --panel2:#5b3a79;
+      --black:#000;
+      --white:#fff;
 
-      --card:#6a4a86;
-      --cardShadow:rgba(0,0,0,.25);
-
-      --black:#101010;
-      --white:#ffffff;
-
-      --btnGreen:#11b45d;
-      --btnGreen2:#0fa355;
+      --btnGreen:#11c064;
+      --btnGreen2:#0fb05b;
 
       --btnBlue:#7aa7ad;
-      --btnBrown:#7a2f19;
-
-      --textWhite:#ffffff;
-      --textSoft:rgba(255,255,255,.85);
-
-      --radius:28px;
-      --radius2:22px;
+      --btnBrown:#6b240f;
     }
 
     *{box-sizing:border-box}
@@ -37,173 +27,175 @@
       margin:0;
       min-height:100vh;
       font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,.08), transparent 60%),
-                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      background: var(--page);
       display:flex;
       align-items:center;
       justify-content:center;
       padding: 18px 14px calc(18px + env(safe-area-inset-bottom));
-      color:var(--textWhite);
+      color:var(--white);
     }
 
+    /* الكرت الخارجي الكبير مثل الصورة */
     .outer{
-      width:min(520px, 94vw);
-      background: rgba(255,255,255,.14);
+      width:min(560px, 95vw);
+      min-height: min(920px, 92vh);
+      background: var(--panel);
       border-radius: 42px;
-      padding: 26px 18px 22px;
+      padding: 26px 18px 18px;
       position:relative;
-      box-shadow: 0 18px 45px rgba(0,0,0,.18);
       overflow:hidden;
     }
-    .outer:before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background: radial-gradient(550px 260px at 50% 0%, rgba(255,255,255,.10), transparent 60%);
-      pointer-events:none;
-    }
 
-    /* ✅ تعديلك: رفع اللوجو أكثر + تصغيره قليل */
+    /* اللوجو أعلى اليسار ومرفوع أكثر */
     .logo{
       position:absolute;
-      top:-30px;
-      left:8px;
-      width:150px;
+      top:18px;
+      left:18px;
+      width:118px;           /* أصغر شوي */
       height:auto;
       pointer-events:none;
       user-select:none;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.25));
       z-index:3;
     }
 
+    /* العنوان */
     .title{
       text-align:center;
-      font-size: clamp(34px, 7vw, 56px);
-      font-weight: 900;
-      letter-spacing: .5px;
-      margin: 44px 0 18px;
-      text-shadow: 0 6px 0 rgba(0,0,0,.20);
-      z-index:2;
-      position:relative;
+      font-size: clamp(40px, 7.5vw, 64px);
+      font-weight: 1000;
+      margin: 108px 0 26px;  /* ينزل تحت اللوجو مثل الصورة */
+      color:#fff;
+      /* ظل/حافة خفيفة مثل الصورة */
+      text-shadow:
+        -2px -2px 0 rgba(0,0,0,.35),
+         2px -2px 0 rgba(0,0,0,.35),
+        -2px  2px 0 rgba(0,0,0,.35),
+         2px  2px 0 rgba(0,0,0,.35),
+         0px  8px 0 rgba(0,0,0,.18);
       white-space:nowrap;
     }
 
+    /* الإطار الأسود الكبير (المربع اللي رسمته) */
     .frame{
-      background: linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.10));
-      border: 5px solid rgba(0,0,0,.85);
-      border-radius: 26px;
-      padding: 22px 16px 16px;
-      box-shadow: 0 14px 26px var(--cardShadow);
-      width:min(460px, 92%);
-      margin: 0 auto 16px;
+      width:min(520px, 92%);
+      margin: 0 auto;
+      padding: 26px 18px 18px;
+      border: 6px solid rgba(0,0,0,.90);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.10));
+      box-shadow: 0 18px 26px rgba(0,0,0,.20);
     }
 
     .label{
       text-align:center;
-      font-size: 34px;
-      font-weight: 900;
-      margin: 10px 0 12px;
-      text-shadow: 0 4px 0 rgba(0,0,0,.18);
+      font-size: 40px;
+      font-weight: 1000;
+      margin: 8px 0 14px;
+      text-shadow: 0 6px 0 rgba(0,0,0,.18);
     }
 
     .input{
       width:100%;
-      height:64px;
-      border-radius: 20px;
-      border: 4px solid rgba(0,0,0,.85);
+      height:72px;
+      border-radius: 26px;
+      border: 5px solid rgba(0,0,0,.90);
       outline:none;
-      font-size: 28px;
-      font-weight: 800;
+      font-size: 30px;
+      font-weight: 900;
       padding: 0 18px;
-      background:#f5f5f5;
-      color:#2b2b2b;
-      box-shadow: inset 0 3px 0 rgba(0,0,0,.12);
+      background:#fff;
+      color:#222;
+      box-shadow: inset 0 4px 0 rgba(0,0,0,.12);
       text-align:center;
     }
     .input::placeholder{
       color:#8b8b8b;
-      font-weight:900;
+      font-weight: 900;
     }
 
     .subLabel{
       text-align:center;
-      font-size: 34px;
-      font-weight: 900;
-      margin: 18px 0 12px;
-      text-shadow: 0 4px 0 rgba(0,0,0,.18);
+      font-size: 40px;
+      font-weight: 1000;
+      margin: 20px 0 14px;
+      text-shadow: 0 6px 0 rgba(0,0,0,.18);
     }
 
     .input2{
       width:100%;
-      height:64px;
-      border-radius: 20px;
-      border: 4px solid rgba(0,0,0,.85);
+      height:72px;
+      border-radius: 26px;
+      border: 5px solid rgba(0,0,0,.90);
       outline:none;
-      font-size: 26px;
-      font-weight: 800;
+      font-size: 28px;
+      font-weight: 900;
       padding: 0 18px;
-      background:#f5f5f5;
-      color:#2b2b2b;
-      box-shadow: inset 0 3px 0 rgba(0,0,0,.12);
+      background:#fff;
+      color:#222;
+      box-shadow: inset 0 4px 0 rgba(0,0,0,.12);
       text-align:center;
     }
+    .input2::placeholder{
+      color:#8b8b8b;
+      font-weight:900;
+    }
     .input2[disabled]{opacity:1}
-    .input2.waiting{color:#8b8b8b}
 
     .shareTitle{
       text-align:center;
-      font-size: 34px;
-      font-weight: 900;
-      margin: 22px 0 14px;
-      text-shadow: 0 4px 0 rgba(0,0,0,.18);
+      font-size: 40px;
+      font-weight: 1000;
+      margin: 28px 0 16px;
+      text-shadow: 0 6px 0 rgba(0,0,0,.18);
     }
 
     .shareRow{
       display:flex;
-      gap:14px;
+      gap:18px;
       justify-content:center;
       align-items:center;
-      padding-bottom: 4px;
+      padding-bottom: 2px;
     }
 
     .btn{
       border:none;
       cursor:pointer;
-      border-radius: 18px;
-      padding: 14px 26px;
-      font-size: 30px;
-      font-weight: 900;
+      border-radius: 22px;
+      padding: 14px 30px;
+      font-size: 34px;
+      font-weight: 1000;
       color:#fff;
-      border: 4px solid rgba(0,0,0,.85);
-      box-shadow: 0 10px 0 rgba(0,0,0,.22);
+      border: 5px solid rgba(0,0,0,.90);
+      box-shadow: 0 12px 0 rgba(0,0,0,.22);
       transform: translateY(0);
       transition: transform .06s ease;
-      min-width: 150px;
+      min-width: 170px;
     }
     .btn:active{transform: translateY(3px)}
     .btn.blue{background: var(--btnBlue)}
     .btn.brown{background: var(--btnBrown)}
 
+    /* زر ابدأ اللعب بمكانه مثل الصورة */
     .startWrap{
       display:flex;
       justify-content:center;
-      margin-top: 12px;
+      margin-top: 34px;
     }
 
     .btnStart{
       border:none;
       cursor:pointer;
-      border-radius: 22px;
-      padding: 14px 42px;
-      font-size: 38px;
+      border-radius: 26px;
+      padding: 14px 54px;
+      font-size: 54px;
       font-weight: 1000;
       color:#fff;
-      border: 4px solid rgba(0,0,0,.85);
+      border: 6px solid rgba(0,0,0,.90);
       background: linear-gradient(180deg, var(--btnGreen), var(--btnGreen2));
       box-shadow: 0 14px 0 rgba(0,0,0,.22);
       transform: translateY(0);
       transition: transform .06s ease, opacity .15s ease;
-      min-width: 260px;
+      min-width: 300px;
     }
     .btnStart:active{transform: translateY(3px)}
     .btnStart:disabled{
@@ -212,16 +204,18 @@
       transform: translateY(0);
     }
 
-    /* ✅ تعديلك الجديد: تصغير الحقوق + سطر واحد + تحت المربع */
+    /* الحقوق أسفل الكرت وعلى خط واحد */
     .footer{
       text-align:center;
-      font-weight:900;
-      font-size: 15px;     /* كان 20px */
-      opacity:.9;
-      margin-top: 14px;    /* كان 10px */
-      white-space: nowrap; /* يخليها على خط مستقيم */
+      font-weight: 1000;
+      font-size: 18px;
+      margin-top: auto;
+      padding-top: 18px;
+      white-space: nowrap;
+      opacity:.95;
     }
 
+    /* مودال المشاركة */
     .modalOverlay{
       position:fixed;
       inset:0;
@@ -233,18 +227,19 @@
       z-index:9999;
     }
     .modal{
-      width:min(440px, 92vw);
-      background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.10));
-      border: 4px solid rgba(0,0,0,.75);
-      border-radius: 26px;
+      width:min(460px, 92vw);
+      background: rgba(255,255,255,.10);
+      border: 5px solid rgba(0,0,0,.80);
+      border-radius: 28px;
       box-shadow: 0 24px 50px rgba(0,0,0,.35);
       padding: 18px 16px 14px;
       color:#fff;
       position:relative;
+      backdrop-filter: blur(6px);
     }
     .modalTitle{
       text-align:center;
-      font-size: 30px;
+      font-size: 32px;
       font-weight: 1000;
       margin: 6px 0 12px;
       text-shadow: 0 4px 0 rgba(0,0,0,.18);
@@ -253,38 +248,36 @@
       position:absolute;
       top:10px;
       left:10px;
-      width:40px;
-      height:40px;
+      width:42px;
+      height:42px;
       border-radius: 14px;
-      border: 3px solid rgba(0,0,0,.75);
-      background: rgba(0,0,0,.15);
+      border: 4px solid rgba(0,0,0,.80);
+      background: rgba(0,0,0,.18);
       color:#fff;
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 1000;
       cursor:pointer;
       display:flex;
       align-items:center;
       justify-content:center;
     }
-
     .qrBox{
-      width: 240px;
-      height: 240px;
+      width: 250px;
+      height: 250px;
       margin: 8px auto 12px;
       background:#fff;
       border-radius: 18px;
-      border: 4px solid rgba(0,0,0,.75);
+      border: 5px solid rgba(0,0,0,.80);
       display:flex;
       align-items:center;
       justify-content:center;
       overflow:hidden;
     }
-
     .linkBox{
       width:100%;
-      background:#f5f5f5;
+      background:#fff;
       border-radius: 18px;
-      border: 4px solid rgba(0,0,0,.75);
+      border: 5px solid rgba(0,0,0,.80);
       padding: 10px 12px;
       color:#1e1e1e;
       font-weight: 900;
@@ -294,17 +287,16 @@
       direction:ltr;
       margin-bottom: 10px;
     }
-
     .copyBtn{
       width:100%;
       border:none;
       cursor:pointer;
       border-radius: 18px;
       padding: 12px 16px;
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 1000;
       color:#111;
-      border: 4px solid rgba(0,0,0,.85);
+      border: 5px solid rgba(0,0,0,.90);
       background: #f4c400;
       box-shadow: 0 10px 0 rgba(0,0,0,.22);
       transform: translateY(0);
@@ -314,14 +306,14 @@
       text-align:center;
       font-size: 16px;
       font-weight: 900;
-      opacity:.85;
+      opacity:.90;
       margin-top: 10px;
     }
   </style>
 </head>
 
 <body>
-  <div class="outer">
+  <div class="outer" style="display:flex;flex-direction:column;">
     <img class="logo" src="logo.PNG" alt="صندوق المسابقات" />
 
     <div class="title">لعبة تخمين الصور</div>
@@ -331,12 +323,13 @@
       <input id="hostName" class="input" type="text" placeholder="اكتب اسمك هنا.." autocomplete="off" />
 
       <div class="subLabel">اللاعب الثاني</div>
-      <input id="player2Box" class="input2 waiting" type="text" value="بانتظار انضمام اللاعب الثاني..." disabled />
+      <input id="player2Box" class="input2" type="text" placeholder="" value="" disabled />
 
       <div class="shareTitle">طرق مشاركة اللاعبين</div>
       <div class="shareRow">
-        <button id="btnQR" class="btn blue" type="button">باركود</button>
+        <!-- نفس ترتيب الصورة: رابط يسار / باركود يمين -->
         <button id="btnLink" class="btn brown" type="button">رابط</button>
+        <button id="btnQR" class="btn blue" type="button">باركود</button>
       </div>
     </div>
 
@@ -465,12 +458,10 @@
         const p2 = (data.player2Name || "").trim();
 
         if(p2){
-          player2Box.classList.remove("waiting");
           player2Box.value = p2;
           btnStart.disabled = !(sanitizeName(hostName.value) && p2);
         }else{
-          player2Box.classList.add("waiting");
-          player2Box.value = "بانتظار انضمام اللاعب الثاني...";
+          player2Box.value = "";
           btnStart.disabled = true;
         }
 
@@ -502,8 +493,8 @@
       qrcodeEl.innerHTML = "";
       new QRCode(qrcodeEl, {
         text: link,
-        width: 210,
-        height: 210,
+        width: 220,
+        height: 220,
         correctLevel: QRCode.CorrectLevel.M
       });
       openModal("qr");
@@ -560,4 +551,4 @@
 </body>
 </html>
 
-<!-- اسم النسخة: index.html (تخمين الصور) – إصدار 4 -->
+<!-- اسم النسخة: index.html (تخمين الصور) – إصدار 5 -->
