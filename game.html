@@ -117,12 +117,12 @@
       padding: 20px;
     }
 
-    /* ✅ التعديل هنا: عرض كامل بدون قص */
+    /* ✅ عرض كامل بدون قص */
     .imgPreview{
       width:100%;
       height:100%;
-      object-fit: contain;              /* بدل cover */
-      background: #ffffff;              /* خلفية داخلية للفراغ */
+      object-fit: contain;
+      background: #ffffff;
       display:none;
     }
 
@@ -319,30 +319,7 @@
 
     let localUrl = "";
     let imageLocked = false;
-    let currentRoundId = "0";
-
-    // ======= (التعديل المطلوب فقط) تثبيت القفل للجولة بدون حفظ الصورة =======
-    function pickKey(rid){
-      return "khamn_pick_" + roomId + "_" + role + "_" + (rid || "0");
-    }
-    function wasPickedThisRound(){
-      try{ return sessionStorage.getItem(pickKey(currentRoundId)) === "1"; }catch(e){ return false; }
-    }
-    function setPickedThisRound(v){
-      try{
-        if(v) sessionStorage.setItem(pickKey(currentRoundId), "1");
-        else sessionStorage.removeItem(pickKey(currentRoundId));
-      }catch(e){}
-    }
-    function setPlaceholderPickedUI(){
-      placeholder.textContent = "تم اختيار الصورة";
-      placeholder.style.display = "block";
-      imgPreview.style.display = "none";
-      imgPreview.src = "";
-    }
-    function setPlaceholderDefaultUI(){
-      placeholder.textContent = "انقر هنا لإضافة صورة";
-    }
+    let currentRoundId = "";
 
     function clearLocalImage(){
       if(localUrl){
@@ -353,66 +330,13 @@
       imgFrame.classList.remove("locked");
       placeholder.style.display = "block";
       imgPreview.style.display = "none";
-      imgPreview.src = "";
+      imgPreview.removeAttribute("src");
       fileInput.value = "";
-      setPlaceholderDefaultUI();
     }
 
     function lockImage(){
       imageLocked = true;
       imgFrame.classList.add("locked");
-    }
-
-    function applyPickLockUI(){
-      if(wasPickedThisRound()){
-        lockImage();
-        setPlaceholderPickedUI(); // قفل بدون حفظ/عرض الصورة بعد reload
-      }else{
-        // مفتوح عادي
-        imageLocked = false;
-        imgFrame.classList.remove("locked");
-        setPlaceholderDefaultUI();
-      }
-    }
-
-    // ======= (التعديل المطلوب فقط) تقليل حجم الصورة لتفادي انهيار سفاري =======
-    async function fileToOptimizedObjectURL(file){
-      // الهدف: نطلع Blob أصغر (JPEG) ثم نسوي له ObjectURL
-      const maxSide = 1600;  // حد آمن لسفاري
-      const quality = 0.86;
-
-      // محاولة استخدام createImageBitmap (سريع). لو ما دعم، fallback مباشرة.
-      let bitmap = null;
-      try{
-        bitmap = await createImageBitmap(file);
-      }catch(e){
-        return URL.createObjectURL(file);
-      }
-      if(!bitmap) return URL.createObjectURL(file);
-
-      const w = bitmap.width;
-      const h = bitmap.height;
-      const scale = Math.min(1, maxSide / Math.max(w, h));
-      const tw = Math.max(1, Math.round(w * scale));
-      const th = Math.max(1, Math.round(h * scale));
-
-      const canvas = document.createElement("canvas");
-      canvas.width = tw;
-      canvas.height = th;
-      const ctx = canvas.getContext("2d", { alpha: false });
-
-      // رسم
-      ctx.drawImage(bitmap, 0, 0, tw, th);
-      try{ bitmap.close && bitmap.close(); }catch(e){}
-
-      const blob = await new Promise((resolve)=>{
-        canvas.toBlob((b)=> resolve(b), "image/jpeg", quality);
-      });
-
-      if(!blob){
-        return URL.createObjectURL(file);
-      }
-      return URL.createObjectURL(blob);
     }
 
     imgFrame.addEventListener("click", ()=>{
@@ -421,26 +345,86 @@
       fileInput.click();
     });
 
+    // ✅ (حل المشكلة) ضغط الصورة محليًا لتقليل الذاكرة في Safari + منع الانهيار عند الرجوع
+    async function compressImageFile(file){
+      const MAX_DIM = 1280;          // حد أقصى للطول/العرض
+      const JPEG_QUALITY = 0.85;     // جودة مناسبة
+
+      // createImageBitmap أسرع وأخف (ومتوفر على iOS الحديثة)
+      const bmp = await createImageBitmap(file);
+
+      let w = bmp.width;
+      let h = bmp.height;
+
+      // تصغير إذا أكبر من الحد
+      const ratio = Math.min(1, MAX_DIM / Math.max(w, h));
+      const nw = Math.max(1, Math.round(w * ratio));
+      const nh = Math.max(1, Math.round(h * ratio));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = nw;
+      canvas.height = nh;
+
+      const ctx = canvas.getContext("2d", { alpha: false });
+      ctx.drawImage(bmp, 0, 0, nw, nh);
+
+      // تحويل إلى Blob (jpeg) لتخفيف الحجم
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob((b)=> resolve(b || file), "image/jpeg", JPEG_QUALITY);
+      });
+
+      try{ bmp.close?.(); }catch(e){}
+      return blob;
+    }
+
     fileInput.addEventListener("change", async (e)=>{
       const file = e.target.files && e.target.files[0];
       if(!file) return;
       if(imageLocked) return;
 
-      // ✅ تحسين سفاري: نصغّر الصورة قبل عرضها
-      const url = await fileToOptimizedObjectURL(file);
+      try{
+        // نظّف أي رابط قديم
+        if(localUrl){
+          try{ URL.revokeObjectURL(localUrl); }catch(err){}
+          localUrl = "";
+        }
 
-      // لو كان عندنا URL سابق، نفكّه
-      if(localUrl){
-        try{ URL.revokeObjectURL(localUrl); }catch(err){}
+        // ضغط محلي
+        const blob = await compressImageFile(file);
+
+        const url = URL.createObjectURL(blob);
+        localUrl = url;
+
+        imgPreview.onload = () => {
+          // نقدر نفك رابط الـ blob بعد التحميل لتقليل مشاكل الاسترجاع
+          try{ URL.revokeObjectURL(url); }catch(err){}
+          // نترك localUrl فاضي لأننا فكّيناه
+          localUrl = "";
+          imgPreview.onload = null;
+        };
+
+        imgPreview.src = url;
+        imgPreview.style.display = "block";
+        placeholder.style.display = "none";
+        lockImage();
+
+        // مهم: نخلي input فاضي عشان سفاري ما يحاول يسترجع الملف نفسه
+        fileInput.value = "";
+      }catch(err){
+        // لو فشل الضغط لأي سبب، نرجع للطريقة القديمة كخطة احتياط
+        const url = URL.createObjectURL(file);
+        localUrl = url;
+        imgPreview.onload = () => {
+          try{ URL.revokeObjectURL(url); }catch(e){}
+          localUrl = "";
+          imgPreview.onload = null;
+        };
+        imgPreview.src = url;
+        imgPreview.style.display = "block";
+        placeholder.style.display = "none";
+        lockImage();
+        fileInput.value = "";
       }
-      localUrl = url;
-
-      imgPreview.src = url;
-      imgPreview.style.display = "block";
-      placeholder.style.display = "none";
-
-      lockImage();
-      setPickedThisRound(true); // ✅ قفل للجولة حتى بعد Reload
     });
 
     let unsub = null;
@@ -476,17 +460,11 @@
           if(isHost) btnRound.disabled = false;
         }
 
-        const rid = String(d.roundId || "0");
-
-        // ✅ عند تغير الجولة: نسمح باختيار صورة من جديد (ونحذف قفل الجولة الجديدة)
-        if(rid !== currentRoundId){
+        const rid = String(d.roundId || "");
+        if(rid && rid !== currentRoundId){
           currentRoundId = rid;
-          try{ sessionStorage.removeItem(pickKey(currentRoundId)); }catch(e){}
           clearLocalImage();
         }
-
-        // ✅ على أي تحديث: طبق القفل من sessionStorage (عشان reload)
-        applyPickLockUI();
       });
     }
 
@@ -520,6 +498,8 @@
     });
 
     window.addEventListener("beforeunload", ()=>{
+      // تنظيف بسيط
+      try{ if(localUrl) URL.revokeObjectURL(localUrl); }catch(e){}
       unsub?.();
     });
 
