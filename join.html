@@ -215,7 +215,6 @@
 
 <body>
   <div class="wrap">
-    <!-- غيّر الاسم إذا ملفك اسمه logo.PNG أو logo.png -->
     <img class="logo" src="logo.PNG" alt="صندوق المسابقات" />
 
     <div class="title">لعبة تخمين الصور</div>
@@ -243,10 +242,9 @@
   </div>
 
   <script type="module">
-    // ========= Firebase (نفس مشروع برا السالفة) =========
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
-      getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot,
+      getFirestore, doc, getDoc, updateDoc, onSnapshot,
       serverTimestamp, arrayUnion
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -263,7 +261,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ========= Helpers =========
     const $ = (id) => document.getElementById(id);
 
     function getRoomId(){
@@ -272,7 +269,6 @@
     }
 
     function makePlayerId(){
-      // ثابت للجهاز (عشان ما يتكرر اللاعب)
       const k = "khamn_playerId";
       let v = localStorage.getItem(k);
       if(!v){
@@ -283,10 +279,7 @@
     }
 
     function cleanName(s){
-      return (s || "")
-        .replace(/\s+/g, " ")
-        .trim()
-        .slice(0, 20);
+      return (s || "").replace(/\s+/g, " ").trim().slice(0, 20);
     }
 
     function showOverlay(msg){
@@ -297,7 +290,6 @@
       $("overlay").classList.remove("show");
     }
 
-    // ========= UI refs =========
     const roomId = getRoomId();
     const playerId = makePlayerId();
 
@@ -313,19 +305,16 @@
       readyBtn.disabled = true;
     }
 
-    // شراء اللعبة
     buyBtn.addEventListener("click", () => {
       window.open("https://sandooq-m.com", "_blank", "noopener,noreferrer");
     });
 
-    // تفعيل زر جاهز بعد الاسم
     nameInput.addEventListener("input", () => {
       const nm = cleanName(nameInput.value);
       readyBtn.disabled = !(nm.length >= 2) || !roomId;
       $("statusText").textContent = nm.length >= 2 ? "اضغط (جاهز) وانتظر المقدم يبدأ اللعب…" : "بانتظار إدخال الاسم…";
     });
 
-    // ========= Room doc =========
     const roomRef = doc(db, "khamnRooms", roomId);
 
     let unsub = null;
@@ -342,7 +331,6 @@
 
       showOverlay("جارٍ تسجيل دخولك…");
 
-      // نتأكد أن الغرفة موجودة
       const ok = await ensureRoomExists();
       if(!ok){
         hideOverlay();
@@ -350,14 +338,13 @@
         return;
       }
 
-      // نسجل اللاعب داخل الغرفة
-      // (نستخدم playersMap: داخل doc -> players.{playerId} = {name, joinedAt, ready:true})
-      // ملاحظة: Firestore ما يسمح update لحقول ديناميكية بسهولة بدون object
-      // لذلك بنستخدم playersArr للتوافق: [{id,name,joinedAt,ready}]
-      // + readyIds كقائمة سريعة
       const playerObj = { id: playerId, name: nm, joinedAt: Date.now(), ready: true };
 
+      // ✅ التعديل المطلوب فقط:
+      // نكتب اسم اللاعب الثاني في player2Name عشان صفحة المقدم تقراه فوراً
       await updateDoc(roomRef, {
+        player2Name: nm,
+        player2Id: playerId,
         playersArr: arrayUnion(playerObj),
         readyIds: arrayUnion(playerId),
         updatedAt: serverTimestamp()
@@ -386,33 +373,30 @@
           return;
         }
         const data = snap.data() || {};
-        // متى يبدأ اللعب؟ نعتمد أي واحد من هذي
         const started = data.status === "started" || !!data.startedAt || data.phase === "game";
         if(started){
-          // ندخل صفحة اللعب
           const url = new URL("game.html", location.href);
           url.searchParams.set("r", roomId);
           url.searchParams.set("role", "player");
           url.searchParams.set("pid", playerId);
           location.href = url.toString();
         }else{
-          // تحديث انتظار
           $("statusText").textContent = "بانتظار المقدم يبدأ اللعب…";
         }
       });
     }
 
-    // نستمع من البداية إذا الغرفة موجودة
     (async () => {
       if(!roomId) return;
       const ok = await ensureRoomExists();
       if(ok) listenRoom();
     })();
 
-    // حماية بسيطة: لو ترك الصفحة
     window.addEventListener("beforeunload", () => {
       unsub?.();
     });
   </script>
 </body>
 </html>
+
+<!-- اسم النسخة: join.html (تخمين الصور) – إصدار 1 -->
