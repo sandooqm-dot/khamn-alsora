@@ -5,137 +5,158 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>لعبة تخمين الصور</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800;900&display=swap" rel="stylesheet">
-
   <style>
     :root{
-      --bg:#6b3b85;
-      --bg2:#4c1563;
+      --bg1:#4a0f63;
+      --bg2:#6b2b88;
+
+      --panel:#6a4a86;
+      --panel2:#5b3a79;
+
+      --card:#6a4a86;
+      --cardShadow:rgba(0,0,0,.25);
+
+      --black:#101010;
       --white:#ffffff;
-      --black:#000000;
-      --shadow:rgba(0,0,0,.35);
-      --green:#17c45a;
-      --teal:#76a8b1;
-      --brown:#7a2a14;
-      --yellow:#f5c400;
-      --muted:rgba(255,255,255,.65);
+
+      --btnGreen:#11b45d;
+      --btnGreen2:#0fa355;
+
+      --btnBlue:#7aa7ad;
+      --btnBrown:#7a2f19;
+
+      --textWhite:#ffffff;
+      --textSoft:rgba(255,255,255,.85);
+
+      --radius:28px;
+      --radius2:22px;
     }
 
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family:"Baloo Bhaijaan 2", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      background: radial-gradient(1200px 800px at 50% 10%, var(--bg) 0%, var(--bg2) 70%);
       min-height:100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,.08), transparent 60%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:24px 14px calc(24px + env(safe-area-inset-bottom));
-      color:#fff;
+      padding: 18px 14px calc(18px + env(safe-area-inset-bottom));
+      color:var(--textWhite);
     }
 
-    .screen{
-      width:min(520px, 96vw);
-      background: rgba(255,255,255,.08);
-      border-radius:34px;
-      padding:18px 18px 20px;
-      box-shadow:0 18px 40px var(--shadow);
+    .outer{
+      width:min(520px, 94vw);
+      background: rgba(255,255,255,.14);
+      border-radius: 42px;
+      padding: 26px 18px 22px;
       position:relative;
+      box-shadow: 0 18px 45px rgba(0,0,0,.18);
+      overflow:hidden;
+    }
+    .outer:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(550px 260px at 50% 0%, rgba(255,255,255,.10), transparent 60%);
+      pointer-events:none;
     }
 
-    /* ✅ رفع اللوجو لأعلى داخل الدائرة الصفراء */
+    /* ✅ اللوجو (مرفوع لفوق شوي مثل طلبك) */
     .logo{
       position:absolute;
-      top:-10px;          /* كان 12px */
-      left:6px;           /* كان 12px */
-      width:155px;        /* تكبير بسيط */
+      top:-22px;     /* رفّعنا اللوجو */
+      left:8px;
+      width:165px;
       height:auto;
       pointer-events:none;
       user-select:none;
       filter: drop-shadow(0 6px 10px rgba(0,0,0,.25));
+      z-index:3;
     }
 
     .title{
       text-align:center;
-      margin:72px 0 16px; /* عشان العنوان ما يصدم اللوجو */
-      font-size:56px;
-      line-height:1;
-      font-weight:900;
-      color:#f2f2f2;
-      text-shadow: 0 4px 0 rgba(0,0,0,.35);
-      letter-spacing:.2px;
+      font-size: clamp(34px, 7vw, 56px);
+      font-weight: 900;
+      letter-spacing: .5px;
+      margin: 44px 0 18px;
+      text-shadow: 0 6px 0 rgba(0,0,0,.20);
+      z-index:2;
+      position:relative;
+      white-space:nowrap;
     }
 
-    /* ✅ تكبير الإطار الأسود ليصير مثل المستطيل الأصفر */
-    .panel{
-      margin:10px auto 18px;
-      width:min(500px, 96%);     /* كان 460px و 92% */
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,.12));
-      border:5px solid #000;
-      border-radius:26px;
-      padding:34px 18px;         /* زيادة الطول */
-      box-shadow: 0 12px 20px rgba(0,0,0,.25);
+    /* ✅ الإطار الأسود (أكبر مثل اللي رسمته) */
+    .frame{
+      background: linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.10));
+      border: 5px solid rgba(0,0,0,.85);
+      border-radius: 26px;
+      padding: 22px 16px 16px;
+      box-shadow: 0 14px 26px var(--cardShadow);
+      width:min(460px, 92%);
+      margin: 0 auto 16px;
     }
 
     .label{
       text-align:center;
-      font-size:38px;
-      font-weight:900;
-      margin:2px 0 6px;
+      font-size: 34px;
+      font-weight: 900;
+      margin: 10px 0 12px;
+      text-shadow: 0 4px 0 rgba(0,0,0,.18);
     }
 
-    .inputWrap{
-      margin:6px 0 18px;
-      display:flex;
-      justify-content:center;
-    }
-
-    input{
-      width:min(400px, 96%);
+    .input{
+      width:100%;
       height:64px;
-      border-radius:22px;
-      border:4px solid #000;
+      border-radius: 20px;
+      border: 4px solid rgba(0,0,0,.85);
       outline:none;
-      background:#f6f6f6;
-      padding:0 18px;
-      font-size:26px;
-      font-weight:800;
+      font-size: 28px;
+      font-weight: 800;
+      padding: 0 18px;
+      background:#f5f5f5;
+      color:#2b2b2b;
+      box-shadow: inset 0 3px 0 rgba(0,0,0,.12);
       text-align:center;
-      color:#222;
-      box-shadow: inset 0 4px 0 rgba(0,0,0,.08);
     }
-    input::placeholder{
-      color:#8d8d8d;
-      font-weight:800;
+    .input::placeholder{
+      color:#8b8b8b;
+      font-weight:900;
     }
 
-    .nameBox{
-      width:min(400px, 96%);
+    .subLabel{
+      text-align:center;
+      font-size: 34px;
+      font-weight: 900;
+      margin: 18px 0 12px;
+      text-shadow: 0 4px 0 rgba(0,0,0,.18);
+    }
+
+    .input2{
+      width:100%;
       height:64px;
-      border-radius:22px;
-      border:4px solid #000;
-      background:#f6f6f6;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:#1e1e1e;
-      font-size:26px;
-      font-weight:900;
-      box-shadow: inset 0 4px 0 rgba(0,0,0,.08);
-      margin:0 auto 12px;
+      border-radius: 20px;
+      border: 4px solid rgba(0,0,0,.85);
+      outline:none;
+      font-size: 26px;
+      font-weight: 800;
+      padding: 0 18px;
+      background:#f5f5f5;
+      color:#2b2b2b;
+      box-shadow: inset 0 3px 0 rgba(0,0,0,.12);
+      text-align:center;
     }
-    .nameBox.muted{
-      color:#8d8d8d;
-      font-weight:800;
-    }
+    .input2[disabled]{opacity:1}
+    .input2.waiting{color:#8b8b8b}
 
     .shareTitle{
       text-align:center;
-      font-size:36px;
-      font-weight:900;
-      margin:20px 0 12px;
+      font-size: 34px;
+      font-weight: 900;
+      margin: 22px 0 14px;
+      text-shadow: 0 4px 0 rgba(0,0,0,.18);
     }
 
     .shareRow{
@@ -143,212 +164,219 @@
       gap:14px;
       justify-content:center;
       align-items:center;
-      flex-wrap:wrap;
-      margin-bottom:6px;
+      padding-bottom: 4px;
     }
 
     .btn{
-      border:4px solid #000;
-      border-radius:22px;
-      height:62px;
-      padding:0 26px;
-      font-size:30px;
-      font-weight:900;
+      border:none;
       cursor:pointer;
+      border-radius: 18px;
+      padding: 14px 26px;
+      font-size: 30px;
+      font-weight: 900;
+      color:#fff;
+      border: 4px solid rgba(0,0,0,.85);
       box-shadow: 0 10px 0 rgba(0,0,0,.22);
-      transition: transform .08s ease, filter .08s ease;
-      user-select:none;
+      transform: translateY(0);
+      transition: transform .06s ease;
+      min-width: 150px;
     }
-    .btn:active{ transform: translateY(2px); filter:brightness(.98); }
-    .btn:disabled{ opacity:.55; cursor:not-allowed; filter:grayscale(.2); }
-
-    .btnLink{ background:var(--brown); color:#fff; }
-    .btnQR{ background:var(--teal); color:#fff; }
+    .btn:active{transform: translateY(3px)}
+    .btn.blue{background: var(--btnBlue)}
+    .btn.brown{background: var(--btnBrown)}
 
     .startWrap{
       display:flex;
       justify-content:center;
-      margin:18px 0 4px;
+      margin-top: 12px;
     }
 
     .btnStart{
-      background:var(--green);
+      border:none;
+      cursor:pointer;
+      border-radius: 22px;
+      padding: 14px 42px;
+      font-size: 38px;
+      font-weight: 1000;
       color:#fff;
-      width:min(320px, 78%);
-      height:72px;
-      border-radius:24px;
-      font-size:40px;
-      font-weight:900;
-      box-shadow: 0 12px 0 rgba(0,0,0,.22);
+      border: 4px solid rgba(0,0,0,.85);
+      background: linear-gradient(180deg, var(--btnGreen), var(--btnGreen2));
+      box-shadow: 0 14px 0 rgba(0,0,0,.22);
+      transform: translateY(0);
+      transition: transform .06s ease, opacity .15s ease;
+      min-width: 260px;
+    }
+    .btnStart:active{transform: translateY(3px)}
+    .btnStart:disabled{
+      opacity:.35;
+      cursor:not-allowed;
+      transform: translateY(0);
     }
 
     .footer{
       text-align:center;
-      margin-top:10px;
-      color:rgba(255,255,255,.92);
-      font-weight:800;
-      font-size:18px;
-      text-shadow: 0 3px 0 rgba(0,0,0,.25);
+      font-weight:900;
+      font-size: 20px;
+      opacity:.9;
+      margin-top: 10px;
     }
 
-    /* Modal */
-    .overlay{
+    /* ✅ مودال المشاركة */
+    .modalOverlay{
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,.55);
+      background: rgba(0,0,0,.55);
       display:none;
       align-items:center;
       justify-content:center;
-      padding:18px;
-      z-index:999999;
+      padding: 20px;
+      z-index:9999;
     }
-    .overlay.show{ display:flex; }
-
     .modal{
-      width:min(520px, 96vw);
-      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.12));
-      border:5px solid #000;
-      border-radius:26px;
-      padding:16px 14px 14px;
+      width:min(440px, 92vw);
+      background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.10));
+      border: 4px solid rgba(0,0,0,.75);
+      border-radius: 26px;
+      box-shadow: 0 24px 50px rgba(0,0,0,.35);
+      padding: 18px 16px 14px;
       color:#fff;
-      box-shadow:0 18px 40px rgba(0,0,0,.35);
-    }
-    .modalHead{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:10px;
+      position:relative;
     }
     .modalTitle{
-      font-size:28px;
-      font-weight:900;
-      margin:0;
+      text-align:center;
+      font-size: 30px;
+      font-weight: 1000;
+      margin: 6px 0 12px;
+      text-shadow: 0 4px 0 rgba(0,0,0,.18);
     }
-    .close{
-      background:rgba(255,255,255,.14);
+    .closeX{
+      position:absolute;
+      top:10px;
+      left:10px;
+      width:40px;
+      height:40px;
+      border-radius: 14px;
+      border: 3px solid rgba(0,0,0,.75);
+      background: rgba(0,0,0,.15);
       color:#fff;
-      border:3px solid #000;
-      width:46px;
-      height:46px;
-      border-radius:14px;
-      font-size:22px;
-      font-weight:900;
+      font-size: 26px;
+      font-weight: 1000;
       cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
-    .qrWrap{
-      display:flex;
-      justify-content:center;
-      margin:8px 0 12px;
-    }
-    #qr{
+    .qrBox{
+      width: 240px;
+      height: 240px;
+      margin: 8px auto 12px;
       background:#fff;
-      padding:10px;
-      border-radius:16px;
-      border:4px solid #000;
+      border-radius: 18px;
+      border: 4px solid rgba(0,0,0,.75);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
     }
 
     .linkBox{
-      background:rgba(255,255,255,.10);
-      border:4px solid #000;
-      border-radius:18px;
-      padding:10px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:center;
-    }
-    .linkText{
+      width:100%;
+      background:#f5f5f5;
+      border-radius: 18px;
+      border: 4px solid rgba(0,0,0,.75);
+      padding: 10px 12px;
+      color:#1e1e1e;
+      font-weight: 900;
+      font-size: 16px;
+      word-break: break-all;
+      text-align:left;
       direction:ltr;
-      background:#fff;
-      color:#111;
-      border:3px solid #000;
-      border-radius:14px;
-      padding:10px 12px;
-      font-weight:900;
-      max-width:100%;
-      overflow:auto;
-      font-size:14px;
-    }
-    .btnCopy{
-      background:var(--yellow);
-      color:#111;
-      height:52px;
-      font-size:24px;
-      border-radius:18px;
-      padding:0 18px;
+      margin-bottom: 10px;
     }
 
+    .copyBtn{
+      width:100%;
+      border:none;
+      cursor:pointer;
+      border-radius: 18px;
+      padding: 12px 16px;
+      font-size: 24px;
+      font-weight: 1000;
+      color:#111;
+      border: 4px solid rgba(0,0,0,.85);
+      background: #f4c400;
+      box-shadow: 0 10px 0 rgba(0,0,0,.22);
+      transform: translateY(0);
+    }
+    .copyBtn:active{transform: translateY(3px)}
     .hint{
       text-align:center;
-      color:var(--muted);
-      font-weight:800;
-      margin-top:10px;
-      font-size:16px;
+      font-size: 16px;
+      font-weight: 900;
+      opacity:.85;
+      margin-top: 10px;
     }
   </style>
 </head>
-<body>
 
-  <div class="screen">
-    <img class="logo" src="logo.PNG" alt="صندوق المسابقات">
+<body>
+  <div class="outer">
+    <img class="logo" src="logo.PNG" alt="صندوق المسابقات" />
 
     <div class="title">لعبة تخمين الصور</div>
 
-    <div class="panel">
+    <div class="frame">
       <div class="label">اللاعب الأول</div>
-      <div class="inputWrap">
-        <input id="hostName" type="text" placeholder="اكتب اسمك هنا.." autocomplete="off" maxlength="18">
-      </div>
+      <input id="hostName" class="input" type="text" placeholder="اكتب اسمك هنا.." autocomplete="off" />
 
-      <div class="label">اللاعب الثاني</div>
-      <div id="guestBox" class="nameBox muted">بانتظار انضمام اللاعب الثاني...</div>
+      <div class="subLabel">اللاعب الثاني</div>
+      <input id="player2Box" class="input2 waiting" type="text" value="بانتظار انضمام اللاعب الثاني..." disabled />
 
       <div class="shareTitle">طرق مشاركة اللاعبين</div>
       <div class="shareRow">
-        <button id="btnLink" class="btn btnLink" type="button">رابط</button>
-        <button id="btnQR" class="btn btnQR" type="button">باركود</button>
+        <button id="btnQR" class="btn blue" type="button">باركود</button>
+        <button id="btnLink" class="btn brown" type="button">رابط</button>
       </div>
     </div>
 
     <div class="startWrap">
-      <button id="btnStart" class="btn btnStart" type="button" disabled>ابدأ اللعب</button>
+      <button id="btnStart" class="btnStart" type="button" disabled>ابدأ اللعب</button>
     </div>
 
     <div class="footer">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
   </div>
 
-  <!-- Modal -->
-  <div id="overlay" class="overlay" role="dialog" aria-modal="true">
+  <!-- ✅ مودال -->
+  <div id="modalOverlay" class="modalOverlay" role="dialog" aria-modal="true">
     <div class="modal">
-      <div class="modalHead">
-        <h3 id="modalTitle" class="modalTitle">مشاركة رابط اللعبة</h3>
-        <button id="btnClose" class="close" type="button">✕</button>
+      <button id="closeModal" class="closeX" type="button">×</button>
+      <div id="modalTitle" class="modalTitle">مشاركة اللعبة</div>
+
+      <div id="qrArea" style="display:none;">
+        <div class="qrBox"><div id="qrcode"></div></div>
       </div>
 
-      <div id="qrWrap" class="qrWrap" style="display:none;">
-        <div id="qr"></div>
+      <div id="linkArea" style="display:none;">
+        <div id="linkText" class="linkBox"></div>
+        <button id="copyBtn" class="copyBtn" type="button">نسخ الرابط</button>
       </div>
 
-      <div class="linkBox">
-        <div id="joinLink" class="linkText">...</div>
-        <button id="btnCopy" class="btn btnCopy" type="button">نسخ</button>
-      </div>
-
-      <div class="hint">شارك الرابط أو الباركود مع اللاعب الثاني للدخول.</div>
+      <div class="hint">انقر خارج النافذة للإغلاق</div>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import {
-      getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp, updateDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  <!-- QRCode -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
+  <script>
+    /***************
+     * Firebase Config (نفس مشروع برا السالفة)
+     ***************/
     const firebaseConfig = {
       apiKey: "AIzaSyDYxoP7QEy3ShH_KOTx19jqj3IbWGTEOd0",
       authDomain: "bara-alsalfah-eu.firebaseapp.com",
@@ -359,196 +387,215 @@
       measurementId: "G-HKJGX94BJD"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    const ROOMS_PATH = "khamnRooms";
-
-    const hostNameEl = document.getElementById("hostName");
-    const guestBoxEl = document.getElementById("guestBox");
-    const btnLink = document.getElementById("btnLink");
-    const btnQR = document.getElementById("btnQR");
-    const btnStart = document.getElementById("btnStart");
-
-    const overlay = document.getElementById("overlay");
-    const btnClose = document.getElementById("btnClose");
-    const modalTitle = document.getElementById("modalTitle");
-    const joinLinkEl = document.getElementById("joinLink");
-    const btnCopy = document.getElementById("btnCopy");
-    const qrWrap = document.getElementById("qrWrap");
-    const qrEl = document.getElementById("qr");
-
-    let roomId = sessionStorage.getItem("khamn_roomId") || "";
-    let unsub = null;
-    let latestJoinUrl = "";
+    /***************
+     * Helpers
+     ***************/
+    const $ = (id) => document.getElementById(id);
 
     function genRoomId(){
-      const n = Math.floor(100000 + Math.random() * 900000);
-      return String(n);
+      // 6 أرقام (متوافق مع الرولز)
+      return String(Math.floor(100000 + Math.random()*900000));
     }
 
-    function baseUrl(){
-      return window.location.href.replace(/[^\/]*$/, "");
+    function sanitizeName(s){
+      return (s || "").trim().replace(/\s+/g,' ').slice(0,18);
     }
 
-    function buildJoinUrl(id){
-      return baseUrl() + "join.html?room=" + encodeURIComponent(id);
+    function getJoinLink(roomId){
+      const base = location.origin + location.pathname.replace(/index\.html?$/i,'');
+      return base + "join.html?room=" + encodeURIComponent(roomId);
     }
 
-    function setGuestName(name){
-      if(name && String(name).trim()){
-        guestBoxEl.classList.remove("muted");
-        guestBoxEl.textContent = String(name).trim();
+    /***************
+     * State
+     ***************/
+    let roomId = sessionStorage.getItem("khamn_roomId") || "";
+    let unsub = null;
+
+    /***************
+     * UI Elements
+     ***************/
+    const hostName = $("hostName");
+    const player2Box = $("player2Box");
+    const btnStart = $("btnStart");
+    const btnQR = $("btnQR");
+    const btnLink = $("btnLink");
+
+    const modalOverlay = $("modalOverlay");
+    const closeModal = $("closeModal");
+    const modalTitle = $("modalTitle");
+    const qrArea = $("qrArea");
+    const linkArea = $("linkArea");
+    const linkText = $("linkText");
+    const copyBtn = $("copyBtn");
+    const qrcodeEl = $("qrcode");
+
+    function openModal(mode){
+      // mode: 'qr' | 'link'
+      modalOverlay.style.display = "flex";
+      if(mode === "qr"){
+        modalTitle.textContent = "مشاركة عبر الباركود";
+        qrArea.style.display = "block";
+        linkArea.style.display = "none";
       }else{
-        guestBoxEl.classList.add("muted");
-        guestBoxEl.textContent = "بانتظار انضمام اللاعب الثاني...";
+        modalTitle.textContent = "مشاركة عبر الرابط";
+        qrArea.style.display = "none";
+        linkArea.style.display = "block";
       }
     }
-
-    function canStart(){
-      const h = hostNameEl.value.trim();
-      const g = !guestBoxEl.classList.contains("muted") && guestBoxEl.textContent.trim();
-      btnStart.disabled = !(h && g);
+    function closeModalFn(){
+      modalOverlay.style.display = "none";
     }
 
+    modalOverlay.addEventListener("click", (e)=>{
+      if(e.target === modalOverlay) closeModalFn();
+    });
+    closeModal.addEventListener("click", closeModalFn);
+
+    /***************
+     * Room init / listen
+     ***************/
     async function ensureRoom(){
       if(!roomId){
         roomId = genRoomId();
         sessionStorage.setItem("khamn_roomId", roomId);
       }
 
-      const hName = hostNameEl.value.trim();
-      const ref = doc(db, ROOMS_PATH, roomId);
-      const snap = await getDoc(ref);
+      const ref = db.collection("khamnRooms").doc(roomId);
 
-      if(!snap.exists()){
-        await setDoc(ref, {
-          createdAt: serverTimestamp(),
-          game: "khamn-alsora",
+      // أنشئ الغرفة إذا ما كانت موجودة
+      const snap = await ref.get();
+      if(!snap.exists){
+        await ref.set({
+          roomId,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          hostName: "",
+          player2Name: "",
           status: "lobby",
-          hostName: hName || "",
-          guestName: "",
+          gameStarted: false,
           startedAt: null
-        });
-      }else{
-        if(hName){
-          await updateDoc(ref, { hostName: hName });
-        }
+        }, { merge:true });
       }
 
-      listenRoom();
-      latestJoinUrl = buildJoinUrl(roomId);
-      joinLinkEl.textContent = latestJoinUrl;
-      return true;
-    }
-
-    function listenRoom(){
+      // Listen
       if(unsub) unsub();
-      if(!roomId) return;
+      unsub = ref.onSnapshot((doc)=>{
+        if(!doc.exists) return;
+        const data = doc.data() || {};
+        const p2 = (data.player2Name || "").trim();
 
-      const ref = doc(db, ROOMS_PATH, roomId);
-      unsub = onSnapshot(ref, (snap)=>{
-        if(!snap.exists()) return;
-
-        const data = snap.data() || {};
-        const hostName = (data.hostName || "").toString();
-        const guestName = (data.guestName || "").toString();
-        const status = (data.status || "").toString();
-
-        if(!hostNameEl.value.trim() && hostName){
-          hostNameEl.value = hostName;
+        if(p2){
+          player2Box.classList.remove("waiting");
+          player2Box.value = p2;
+          btnStart.disabled = !(sanitizeName(hostName.value) && p2);
+        }else{
+          player2Box.classList.add("waiting");
+          player2Box.value = "بانتظار انضمام اللاعب الثاني...";
+          btnStart.disabled = true;
         }
 
-        setGuestName(guestName);
-        canStart();
-
-        if(status === "started"){
-          window.location.href = "game.html?room=" + encodeURIComponent(roomId) + "&role=host";
+        // إذا بدأ اللعب من نفس الغرفة (احتياط)
+        if(data.gameStarted === true){
+          const url = "game.html?room=" + encodeURIComponent(roomId) + "&role=host";
+          if(!location.href.includes("game.html")) location.href = url;
         }
       });
+
+      return ref;
     }
 
-    function openModal(mode){
-      overlay.classList.add("show");
+    /***************
+     * Events
+     ***************/
+    hostName.addEventListener("input", async ()=>{
+      const name = sanitizeName(hostName.value);
+      // زر ابدأ اللعب يتفعل فقط لما: اسم المقدم موجود + اللاعب الثاني موجود
+      const ref = db.collection("khamnRooms").doc(roomId);
+      await ref.set({ hostName: name }, { merge:true });
 
-      if(mode === "qr"){
-        modalTitle.textContent = "مشاركة باركود اللعبة";
-        qrWrap.style.display = "flex";
-        qrEl.innerHTML = "";
-        new QRCode(qrEl, { text: latestJoinUrl, width: 180, height: 180 });
-      }else{
-        modalTitle.textContent = "مشاركة رابط اللعبة";
-        qrWrap.style.display = "none";
-      }
-    }
+      // لا نعتمد هنا على player2Box.value لأنه نص انتظار — التفعيل بيجي من الـ onSnapshot
+    });
 
-    function closeModal(){ overlay.classList.remove("show"); }
+    btnLink.addEventListener("click", ()=>{
+      if(!roomId) return;
+      const link = getJoinLink(roomId);
+      linkText.textContent = link;
+      openModal("link");
+    });
 
-    btnClose.addEventListener("click", closeModal);
-    overlay.addEventListener("click", (e)=>{ if(e.target === overlay) closeModal(); });
+    btnQR.addEventListener("click", ()=>{
+      if(!roomId) return;
+      const link = getJoinLink(roomId);
 
-    btnCopy.addEventListener("click", async ()=>{
-      if(!latestJoinUrl) return;
+      // نظف QR قديم
+      qrcodeEl.innerHTML = "";
+      new QRCode(qrcodeEl, {
+        text: link,
+        width: 210,
+        height: 210,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      openModal("qr");
+    });
+
+    copyBtn.addEventListener("click", async ()=>{
+      const link = linkText.textContent.trim();
       try{
-        await navigator.clipboard.writeText(latestJoinUrl);
-        btnCopy.textContent = "تم النسخ";
-        setTimeout(()=> btnCopy.textContent = "نسخ", 900);
-      }catch{
+        await navigator.clipboard.writeText(link);
+        copyBtn.textContent = "تم النسخ ✅";
+        setTimeout(()=> copyBtn.textContent="نسخ الرابط", 1200);
+      }catch(e){
+        // fallback
         const ta = document.createElement("textarea");
-        ta.value = latestJoinUrl;
+        ta.value = link;
         document.body.appendChild(ta);
         ta.select();
         document.execCommand("copy");
         document.body.removeChild(ta);
-        btnCopy.textContent = "تم النسخ";
-        setTimeout(()=> btnCopy.textContent = "نسخ", 900);
-      }
-    });
-
-    btnLink.addEventListener("click", async ()=>{
-      await ensureRoom();
-      openModal("link");
-    });
-
-    btnQR.addEventListener("click", async ()=>{
-      await ensureRoom();
-      openModal("qr");
-    });
-
-    hostNameEl.addEventListener("input", ()=>{ canStart(); });
-
-    hostNameEl.addEventListener("blur", async ()=>{
-      if(roomId){
-        const hName = hostNameEl.value.trim();
-        if(hName){
-          const ref = doc(db, ROOMS_PATH, roomId);
-          try{ await updateDoc(ref, { hostName: hName }); }catch{}
-        }
+        copyBtn.textContent = "تم النسخ ✅";
+        setTimeout(()=> copyBtn.textContent="نسخ الرابط", 1200);
       }
     });
 
     btnStart.addEventListener("click", async ()=>{
-      const h = hostNameEl.value.trim();
-      const g = !guestBoxEl.classList.contains("muted") && guestBoxEl.textContent.trim();
-      if(!(h && g)) return;
+      const name = sanitizeName(hostName.value);
+      if(!name) return;
 
-      await ensureRoom();
+      const ref = db.collection("khamnRooms").doc(roomId);
+      const snap = await ref.get();
+      const data = snap.data() || {};
+      if(!(data.player2Name || "").trim()){
+        btnStart.disabled = true;
+        return;
+      }
 
-      const ref = doc(db, ROOMS_PATH, roomId);
-      await updateDoc(ref, { status: "started", startedAt: serverTimestamp(), hostName: h });
+      await ref.set({
+        hostName: name,
+        status: "game",
+        gameStarted: true,
+        startedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge:true });
 
-      window.location.href = "game.html?room=" + encodeURIComponent(roomId) + "&role=host";
+      location.href = "game.html?room=" + encodeURIComponent(roomId) + "&role=host";
     });
 
-    (async function boot(){
-      if(roomId){
-        listenRoom();
-        latestJoinUrl = buildJoinUrl(roomId);
-        joinLinkEl.textContent = latestJoinUrl;
+    /***************
+     * Start
+     ***************/
+    (async function(){
+      await ensureRoom();
+      // لو كان عنده اسم سابق مخزن بالمربع (احتياط)
+      const current = sanitizeName(hostName.value);
+      if(current){
+        await db.collection("khamnRooms").doc(roomId).set({ hostName: current }, { merge:true });
       }
     })();
   </script>
 </body>
 </html>
 
-<!-- اسم النسخة: index.html (خمن الصورة) – إصدار 4 -->
+<!-- اسم النسخة: index.html (تخمين الصور) – إصدار 2 -->
