@@ -47,13 +47,13 @@
       position:relative;
     }
 
-    /* ✅ تكبير اللوجو ونقله للزاوية المقابلة (يمين فوق) */
+    /* ✅ نقل اللوجو إلى أعلى يسار + تكبيره */
     .logo{
       position:absolute;
       top:12px;
-      right:12px;
-      left:auto;
-      width:125px;
+      left:12px;
+      right:auto;
+      width:145px;
       height:auto;
       pointer-events:none;
       user-select:none;
@@ -71,13 +71,14 @@
       letter-spacing:.2px;
     }
 
+    /* ✅ تكبير الإطار الخلفي (أطول من فوق وتحت شوي) */
     .panel{
       margin:10px auto 18px;
       width:min(460px, 92%);
       background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,.12));
       border:5px solid #000;
       border-radius:26px;
-      padding:18px 16px;
+      padding:28px 16px;              /* كان 18px 16px */
       box-shadow: 0 12px 20px rgba(0,0,0,.25);
     }
 
@@ -89,7 +90,7 @@
     }
 
     .inputWrap{
-      margin:6px 0 14px;
+      margin:6px 0 16px;              /* كان 14px */
       display:flex;
       justify-content:center;
     }
@@ -126,7 +127,7 @@
       font-size:26px;
       font-weight:900;
       box-shadow: inset 0 4px 0 rgba(0,0,0,.08);
-      margin:0 auto 8px;
+      margin:0 auto 10px;             /* كان 8px */
     }
     .nameBox.muted{
       color:#8d8d8d;
@@ -137,7 +138,7 @@
       text-align:center;
       font-size:36px;
       font-weight:900;
-      margin:12px 0 10px;
+      margin:18px 0 12px;             /* كان 12/10 */
     }
 
     .shareRow{
@@ -146,7 +147,7 @@
       justify-content:center;
       align-items:center;
       flex-wrap:wrap;
-      margin-bottom:4px;
+      margin-bottom:8px;              /* كان 4px */
     }
 
     .btn{
@@ -202,7 +203,7 @@
       align-items:center;
       justify-content:center;
       padding:18px;
-      z-index:999999; /* ✅ تأكيد فوق كل شيء */
+      z-index:999999;
     }
     .overlay.show{ display:flex; }
 
@@ -388,7 +389,6 @@
     let latestJoinUrl = "";
 
     function genRoomId(){
-      // 6 أرقام
       const n = Math.floor(100000 + Math.random() * 900000);
       return String(n);
     }
@@ -417,14 +417,13 @@
       btnStart.disabled = !(h && g);
     }
 
-    // ✅ تعديل مهم: مشاركة الرابط/الباركود تشتغل حتى لو اسم المقدم فاضي
     async function ensureRoom(){
       if(!roomId){
         roomId = genRoomId();
         sessionStorage.setItem("khamn_roomId", roomId);
       }
 
-      const hName = hostNameEl.value.trim(); // ممكن يكون فاضي
+      const hName = hostNameEl.value.trim();
       const ref = doc(db, ROOMS_PATH, roomId);
       const snap = await getDoc(ref);
 
@@ -438,7 +437,6 @@
           startedAt: null
         });
       }else{
-        // نحدث اسم المقدم فقط إذا كتبه (ما نلخبط لو فاضي)
         if(hName){
           await updateDoc(ref, { hostName: hName });
         }
@@ -527,20 +525,16 @@
     hostNameEl.addEventListener("input", ()=>{ canStart(); });
 
     hostNameEl.addEventListener("blur", async ()=>{
-      if(roomId){ // إذا فيه غرفة بالفعل
+      if(roomId){
         const hName = hostNameEl.value.trim();
         if(hName){
           const ref = doc(db, ROOMS_PATH, roomId);
           try{ await updateDoc(ref, { hostName: hName }); }catch{}
         }
-      }else{
-        // لو ما في غرفة، وما كتب الاسم، ما نسوي شيء هنا
-        // (المشاركة هي اللي تنشئ الغرفة الآن)
       }
     });
 
     btnStart.addEventListener("click", async ()=>{
-      // ابدأ اللعب لازم اسم + لاعب ثاني
       const h = hostNameEl.value.trim();
       const g = !guestBoxEl.classList.contains("muted") && guestBoxEl.textContent.trim();
       if(!(h && g)) return;
@@ -564,4 +558,4 @@
 </body>
 </html>
 
-<!-- اسم النسخة: index.html (خمن الصورة) – إصدار 2 -->
+<!-- اسم النسخة: index.html (خمن الصورة) – إصدار 3 -->
