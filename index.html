@@ -47,11 +47,13 @@
       position:relative;
     }
 
+    /* ✅ تكبير اللوجو ونقله للزاوية المقابلة (يمين فوق) */
     .logo{
       position:absolute;
-      top:14px;
-      left:14px;
-      width:92px;
+      top:12px;
+      right:12px;
+      left:auto;
+      width:125px;
       height:auto;
       pointer-events:none;
       user-select:none;
@@ -65,9 +67,7 @@
       line-height:1;
       font-weight:900;
       color:#f2f2f2;
-      text-shadow:
-        0 4px 0 rgba(0,0,0,.35),
-        0 0 0 rgba(0,0,0,.0);
+      text-shadow: 0 4px 0 rgba(0,0,0,.35);
       letter-spacing:.2px;
     }
 
@@ -128,7 +128,6 @@
       box-shadow: inset 0 4px 0 rgba(0,0,0,.08);
       margin:0 auto 8px;
     }
-
     .nameBox.muted{
       color:#8d8d8d;
       font-weight:800;
@@ -203,7 +202,7 @@
       align-items:center;
       justify-content:center;
       padding:18px;
-      z-index:9999;
+      z-index:999999; /* ✅ تأكيد فوق كل شيء */
     }
     .overlay.show{ display:flex; }
 
@@ -337,7 +336,7 @@
 
       <div class="linkBox">
         <div id="joinLink" class="linkText">...</div>
-        <button id="btnCopy" class="btn btnCopy btnCopy" type="button">نسخ</button>
+        <button id="btnCopy" class="btn btnCopy" type="button">نسخ</button>
       </div>
 
       <div class="hint">شارك الرابط أو الباركود مع اللاعب الثاني للدخول.</div>
@@ -389,13 +388,12 @@
     let latestJoinUrl = "";
 
     function genRoomId(){
-      // 6 أرقام (مناسب لرولزك)
+      // 6 أرقام
       const n = Math.floor(100000 + Math.random() * 900000);
       return String(n);
     }
 
     function baseUrl(){
-      // نفس مجلد المشروع في GitHub Pages
       return window.location.href.replace(/[^\/]*$/, "");
     }
 
@@ -419,18 +417,14 @@
       btnStart.disabled = !(h && g);
     }
 
+    // ✅ تعديل مهم: مشاركة الرابط/الباركود تشتغل حتى لو اسم المقدم فاضي
     async function ensureRoom(){
-      const hName = hostNameEl.value.trim();
-      if(!hName){
-        hostNameEl.focus();
-        return false;
-      }
-
       if(!roomId){
         roomId = genRoomId();
         sessionStorage.setItem("khamn_roomId", roomId);
       }
 
+      const hName = hostNameEl.value.trim(); // ممكن يكون فاضي
       const ref = doc(db, ROOMS_PATH, roomId);
       const snap = await getDoc(ref);
 
@@ -439,13 +433,15 @@
           createdAt: serverTimestamp(),
           game: "khamn-alsora",
           status: "lobby",
-          hostName: hName,
+          hostName: hName || "",
           guestName: "",
           startedAt: null
         });
       }else{
-        // حدّث اسم المقدم فقط (بدون لعب بالبيانات الثانية)
-        await updateDoc(ref, { hostName: hName });
+        // نحدث اسم المقدم فقط إذا كتبه (ما نلخبط لو فاضي)
+        if(hName){
+          await updateDoc(ref, { hostName: hName });
+        }
       }
 
       listenRoom();
@@ -468,7 +464,6 @@
         const guestName = (data.guestName || "").toString();
         const status = (data.status || "").toString();
 
-        // لا نغصب المستخدم، بس لو فاضي وداخلنا من جديد
         if(!hostNameEl.value.trim() && hostName){
           hostNameEl.value = hostName;
         }
@@ -476,7 +471,6 @@
         setGuestName(guestName);
         canStart();
 
-        // لو بدأ اللعب (احتياط)
         if(status === "started"){
           window.location.href = "game.html?room=" + encodeURIComponent(roomId) + "&role=host";
         }
@@ -485,27 +479,20 @@
 
     function openModal(mode){
       overlay.classList.add("show");
+
       if(mode === "qr"){
         modalTitle.textContent = "مشاركة باركود اللعبة";
         qrWrap.style.display = "flex";
         qrEl.innerHTML = "";
-        // QR
-        new QRCode(qrEl, {
-          text: latestJoinUrl,
-          width: 180,
-          height: 180
-        });
+        new QRCode(qrEl, { text: latestJoinUrl, width: 180, height: 180 });
       }else{
         modalTitle.textContent = "مشاركة رابط اللعبة";
         qrWrap.style.display = "none";
       }
     }
 
-    function closeModal(){
-      overlay.classList.remove("show");
-    }
+    function closeModal(){ overlay.classList.remove("show"); }
 
-    // أحداث
     btnClose.addEventListener("click", closeModal);
     overlay.addEventListener("click", (e)=>{ if(e.target === overlay) closeModal(); });
 
@@ -516,7 +503,6 @@
         btnCopy.textContent = "تم النسخ";
         setTimeout(()=> btnCopy.textContent = "نسخ", 900);
       }catch{
-        // fallback بسيط
         const ta = document.createElement("textarea");
         ta.value = latestJoinUrl;
         document.body.appendChild(ta);
@@ -529,46 +515,46 @@
     });
 
     btnLink.addEventListener("click", async ()=>{
-      const ok = await ensureRoom();
-      if(!ok) return;
+      await ensureRoom();
       openModal("link");
     });
 
     btnQR.addEventListener("click", async ()=>{
-      const ok = await ensureRoom();
-      if(!ok) return;
+      await ensureRoom();
       openModal("qr");
     });
 
-    hostNameEl.addEventListener("input", ()=>{
-      // ما نفعّل ابدأ اللعب إلا بعد انضمام الثاني
-      canStart();
-    });
+    hostNameEl.addEventListener("input", ()=>{ canStart(); });
 
     hostNameEl.addEventListener("blur", async ()=>{
-      // لما يكتب اسمه ونطلع من الحقل: ننشئ الغرفة تلقائياً
-      if(hostNameEl.value.trim()){
-        await ensureRoom();
+      if(roomId){ // إذا فيه غرفة بالفعل
+        const hName = hostNameEl.value.trim();
+        if(hName){
+          const ref = doc(db, ROOMS_PATH, roomId);
+          try{ await updateDoc(ref, { hostName: hName }); }catch{}
+        }
+      }else{
+        // لو ما في غرفة، وما كتب الاسم، ما نسوي شيء هنا
+        // (المشاركة هي اللي تنشئ الغرفة الآن)
       }
     });
 
     btnStart.addEventListener("click", async ()=>{
-      const ok = await ensureRoom();
-      if(!ok) return;
+      // ابدأ اللعب لازم اسم + لاعب ثاني
+      const h = hostNameEl.value.trim();
+      const g = !guestBoxEl.classList.contains("muted") && guestBoxEl.textContent.trim();
+      if(!(h && g)) return;
+
+      await ensureRoom();
 
       const ref = doc(db, ROOMS_PATH, roomId);
-      await updateDoc(ref, {
-        status: "started",
-        startedAt: serverTimestamp()
-      });
+      await updateDoc(ref, { status: "started", startedAt: serverTimestamp(), hostName: h });
 
       window.location.href = "game.html?room=" + encodeURIComponent(roomId) + "&role=host";
     });
 
-    // لو رجعنا للصفحة وفيه roomId محفوظ
     (async function boot(){
       if(roomId){
-        // لو موجودة غرفة سابقة، اربط الاستماع
         listenRoom();
         latestJoinUrl = buildJoinUrl(roomId);
         joinLinkEl.textContent = latestJoinUrl;
@@ -578,4 +564,4 @@
 </body>
 </html>
 
-<!-- اسم النسخة: index.html (خمن الصورة) – إصدار 1 -->
+<!-- اسم النسخة: index.html (خمن الصورة) – إصدار 2 -->
