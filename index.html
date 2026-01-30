@@ -1,346 +1,370 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>لعبة تخمين الصور</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg1:#5b2a74;
-      --bg2:#3f1b56;
-      --card:#6f4b86;
-      --card2:#6b4583;
-      --stroke:#0d0d0d;
+      /* نفس إحساس الصورة */
+      --page:#7a4a93;
+      --panel:#7a4a93;
+      --inner:#5f2a7a;
+
+      --black:#000;
       --white:#fff;
-      --shadow: rgba(0,0,0,.25);
-      --btnBlue:#7da9b4;
-      --btnBrown:#5a220f;
-      --btnGreen:#10c45b;
-      --btnGreen2:#0fb054;
-      --btnYellow:#f4c400;
+
+      --btnGreen:#11c064;
+      --btnGreen2:#0fb05b;
+
+      --btnBlue:#7aa7ad;
+      --btnBrown:#6b240f;
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
       min-height:100vh;
-      font-family:"Baloo Bhaijaan 2", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(1200px 700px at 50% -150px, #8b6aa3 0%, transparent 60%),
-                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background: var(--page);
       display:flex;
+      align-items:center;
       justify-content:center;
-      align-items:flex-start;
-      padding: 26px 14px calc(22px + env(safe-area-inset-bottom));
+      padding: 18px 14px calc(18px + env(safe-area-inset-bottom));
       color:var(--white);
     }
 
-    .wrap{
-      width:min(540px, 100%);
-      background: rgba(255,255,255,.10);
-      border-radius: 26px;
-      padding: 18px 16px 18px;
-      box-shadow: 0 18px 40px rgba(0,0,0,.25);
+    /* الكرت الخارجي الكبير مثل الصورة */
+    .outer{
+      width:min(560px, 95vw);
+      min-height: min(920px, 92vh);
+      background: var(--panel);
+      border-radius: 42px;
+      padding: 26px 18px 18px;
       position:relative;
       overflow:hidden;
     }
 
+    /* اللوجو أعلى اليسار ومرفوع أكثر */
     .logo{
       position:absolute;
-      top: 10px;
-      left: 12px;
-      width: 86px;
-      height: 86px;
-      object-fit:contain;
+      top:18px;
+      left:18px;
+      width:118px;           /* أصغر شوي */
+      height:auto;
       pointer-events:none;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.25));
+      user-select:none;
+      z-index:3;
     }
 
-    h1{
-      margin: 66px 0 18px;
+    /* العنوان */
+    .title{
       text-align:center;
-      font-size: clamp(36px, 6.6vw, 54px);
-      font-weight: 900;
-      letter-spacing:.5px;
+      font-size: clamp(40px, 7.5vw, 64px);
+      font-weight: 1000;
+      margin: 108px 0 26px;  /* ينزل تحت اللوجو مثل الصورة */
+      color:#fff;
+      /* ظل/حافة خفيفة مثل الصورة */
       text-shadow:
-        0 3px 0 rgba(0,0,0,.35),
-        0 10px 20px rgba(0,0,0,.18);
+        -2px -2px 0 rgba(0,0,0,.35),
+         2px -2px 0 rgba(0,0,0,.35),
+        -2px  2px 0 rgba(0,0,0,.35),
+         2px  2px 0 rgba(0,0,0,.35),
+         0px  8px 0 rgba(0,0,0,.18);
+      white-space:nowrap;
     }
 
+    /* الإطار الأسود الكبير (المربع اللي رسمته) */
     .frame{
-      margin: 0 auto 18px;
-      width: min(470px, 100%);
-      background: linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.12));
-      border-radius: 22px;
-      padding: 18px 14px 16px;
-      border: 5px solid rgba(0,0,0,.65);
-      box-shadow: inset 0 10px 20px rgba(0,0,0,.18);
+      width:min(520px, 92%);
+      margin: 0 auto;
+      padding: 26px 18px 18px;
+      border: 6px solid rgba(0,0,0,.90);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.10));
+      box-shadow: 0 18px 26px rgba(0,0,0,.20);
     }
 
     .label{
       text-align:center;
-      font-size: 34px;
-      font-weight: 900;
-      margin: 4px 0 10px;
-      text-shadow: 0 2px 0 rgba(0,0,0,.25);
+      font-size: 40px;
+      font-weight: 1000;
+      margin: 8px 0 14px;
+      text-shadow: 0 6px 0 rgba(0,0,0,.18);
     }
 
-    .in{
+    .input{
       width:100%;
-      height: 62px;
-      border-radius: 18px;
-      border: 4px solid rgba(0,0,0,.70);
-      background: #f2f2f2;
-      padding: 0 16px;
-      font-size: 28px;
-      font-weight: 800;
-      text-align:center;
-      color:#4b4b4b;
+      height:72px;
+      border-radius: 26px;
+      border: 5px solid rgba(0,0,0,.90);
       outline:none;
-      box-shadow: inset 0 8px 16px rgba(0,0,0,.10);
+      font-size: 30px;
+      font-weight: 900;
+      padding: 0 18px;
+      background:#fff;
+      color:#222;
+      box-shadow: inset 0 4px 0 rgba(0,0,0,.12);
+      text-align:center;
     }
-    .in::placeholder{color:#9a9a9a;font-weight:800}
-
-    .spacer{height:14px}
+    .input::placeholder{
+      color:#8b8b8b;
+      font-weight: 900;
+    }
 
     .subLabel{
       text-align:center;
-      font-size: 32px;
-      font-weight: 900;
-      margin: 2px 0 10px;
-      text-shadow: 0 2px 0 rgba(0,0,0,.25);
+      font-size: 40px;
+      font-weight: 1000;
+      margin: 20px 0 14px;
+      text-shadow: 0 6px 0 rgba(0,0,0,.18);
     }
 
-    .row{
+    .input2{
+      width:100%;
+      height:72px;
+      border-radius: 26px;
+      border: 5px solid rgba(0,0,0,.90);
+      outline:none;
+      font-size: 28px;
+      font-weight: 900;
+      padding: 0 18px;
+      background:#fff;
+      color:#222;
+      box-shadow: inset 0 4px 0 rgba(0,0,0,.12);
+      text-align:center;
+    }
+    .input2::placeholder{
+      color:#8b8b8b;
+      font-weight:900;
+    }
+    .input2[disabled]{opacity:1}
+
+    .shareTitle{
+      text-align:center;
+      font-size: 40px;
+      font-weight: 1000;
+      margin: 28px 0 16px;
+      text-shadow: 0 6px 0 rgba(0,0,0,.18);
+    }
+
+    .shareRow{
       display:flex;
-      gap: 14px;
+      gap:18px;
       justify-content:center;
-      margin-top: 8px;
+      align-items:center;
+      padding-bottom: 2px;
     }
 
     .btn{
       border:none;
       cursor:pointer;
-      font-family:inherit;
-      font-weight: 900;
-      font-size: 30px;
-      padding: 14px 22px;
-      border-radius: 18px;
-      min-width: 160px;
-      box-shadow: 0 10px 0 rgba(0,0,0,.25), 0 18px 30px rgba(0,0,0,.18);
-      border: 4px solid rgba(0,0,0,.75);
+      border-radius: 22px;
+      padding: 14px 30px;
+      font-size: 34px;
+      font-weight: 1000;
+      color:#fff;
+      border: 5px solid rgba(0,0,0,.90);
+      box-shadow: 0 12px 0 rgba(0,0,0,.22);
+      transform: translateY(0);
       transition: transform .06s ease;
+      min-width: 170px;
     }
-    .btn:active{transform: translateY(2px)}
-    .btn-blue{background: var(--btnBlue); color:#fff}
-    .btn-brown{background: var(--btnBrown); color:#fff}
+    .btn:active{transform: translateY(3px)}
+    .btn.blue{background: var(--btnBlue)}
+    .btn.brown{background: var(--btnBrown)}
 
+    /* زر ابدأ اللعب بمكانه مثل الصورة */
     .startWrap{
       display:flex;
       justify-content:center;
-      margin: 18px 0 10px;
+      margin-top: 34px;
     }
 
-    /* ✅ زر ابدأ اللعب: أصغر + بيضاوي مثل الصورة */
+    /* ✅ التعديل الوحيد هنا: تصغير + كبسولة */
     .btnStart{
-      background: linear-gradient(180deg, var(--btnGreen), var(--btnGreen2));
-      color:#fff;
-      border: 4px solid rgba(0,0,0,.75);
-      box-shadow: 0 10px 0 rgba(0,0,0,.25), 0 18px 30px rgba(0,0,0,.18);
-      font-size: 40px;
-      font-weight: 900;
-      padding: 14px 44px;
-      border-radius: 999px; /* بيضاوي */
+      border:none;
       cursor:pointer;
-      min-width: 240px;
-      transition: transform .06s ease, filter .2s ease, opacity .2s ease;
+      border-radius: 999px;              /* كبسولة */
+      padding: 10px 44px;                /* أصغر */
+      font-size: 46px;                   /* أصغر */
+      font-weight: 1000;
+      color:#fff;
+      border: 6px solid rgba(0,0,0,.90);
+      background: linear-gradient(180deg, var(--btnGreen), var(--btnGreen2));
+      box-shadow: 0 14px 0 rgba(0,0,0,.22);
+      transform: translateY(0);
+      transition: transform .06s ease, opacity .15s ease;
+      min-width: 260px;                  /* أصغر */
     }
-    .btnStart:active{transform: translateY(2px)}
-    .btnStart[disabled]{
-      opacity:.55;
-      filter: grayscale(25%);
+    .btnStart:active{transform: translateY(3px)}
+    .btnStart:disabled{
+      opacity:.35;
       cursor:not-allowed;
+      transform: translateY(0);
     }
 
-    .buyBtn{
-      display:block;
-      margin: 10px auto 12px;
-      background: linear-gradient(180deg, #ffd34d, var(--btnYellow));
-      color:#111;
-      text-decoration:none;
-      text-align:center;
-      font-weight: 900;
-      font-size: 30px;
-      padding: 14px 18px;
-      border-radius: 999px;
-      width: min(430px, 100%);
-      border: 4px solid rgba(0,0,0,.75);
-      box-shadow: 0 10px 0 rgba(0,0,0,.25), 0 18px 30px rgba(0,0,0,.18);
-    }
-
-    .note{
-      text-align:center;
-      margin-top: 2px;
-      font-size: 18px;
-      opacity:.85;
-      font-weight:700;
-    }
-
-    /* ✅ الحقوق: أصغر + سطر واحد + أسفل المربع */
+    /* الحقوق أسفل الكرت وعلى خط واحد */
     .footer{
       text-align:center;
+      font-weight: 1000;
       font-size: 18px;
-      font-weight: 800;
-      opacity:.95;
-      margin-top: 8px;
+      margin-top: auto;
+      padding-top: 18px;
       white-space: nowrap;
+      opacity:.95;
     }
 
-    /* Modal */
-    .overlay{
+    /* مودال المشاركة */
+    .modalOverlay{
       position:fixed;
       inset:0;
       background: rgba(0,0,0,.55);
       display:none;
       align-items:center;
       justify-content:center;
-      padding: 18px;
-      z-index: 9999;
+      padding: 20px;
+      z-index:9999;
     }
-    .overlay.show{display:flex}
     .modal{
-      width:min(520px, 100%);
-      background: #ffffff;
-      color:#111;
-      border-radius: 18px;
-      padding: 16px 14px 14px;
-      border: 4px solid rgba(0,0,0,.75);
-      box-shadow: 0 25px 60px rgba(0,0,0,.35);
-    }
-    .modalTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 10px;
+      width:min(460px, 92vw);
+      background: rgba(255,255,255,.10);
+      border: 5px solid rgba(0,0,0,.80);
+      border-radius: 28px;
+      box-shadow: 0 24px 50px rgba(0,0,0,.35);
+      padding: 18px 16px 14px;
+      color:#fff;
+      position:relative;
+      backdrop-filter: blur(6px);
     }
     .modalTitle{
-      font-weight: 900;
-      font-size: 22px;
+      text-align:center;
+      font-size: 32px;
+      font-weight: 1000;
+      margin: 6px 0 12px;
+      text-shadow: 0 4px 0 rgba(0,0,0,.18);
     }
-    .closeBtn{
-      border:none;
-      background:#eee;
-      font-weight:900;
-      border-radius: 10px;
-      padding: 8px 10px;
+    .closeX{
+      position:absolute;
+      top:10px;
+      left:10px;
+      width:42px;
+      height:42px;
+      border-radius: 14px;
+      border: 4px solid rgba(0,0,0,.80);
+      background: rgba(0,0,0,.18);
+      color:#fff;
+      font-size: 28px;
+      font-weight: 1000;
       cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .qrBox{
+      width: 250px;
+      height: 250px;
+      margin: 8px auto 12px;
+      background:#fff;
+      border-radius: 18px;
+      border: 5px solid rgba(0,0,0,.80);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
     }
     .linkBox{
       width:100%;
-      border: 2px solid #ddd;
-      border-radius: 12px;
+      background:#fff;
+      border-radius: 18px;
+      border: 5px solid rgba(0,0,0,.80);
       padding: 10px 12px;
+      color:#1e1e1e;
+      font-weight: 900;
       font-size: 16px;
-      font-weight: 700;
-      direction:ltr;
+      word-break: break-all;
       text-align:left;
-      background:#fafafa;
-    }
-    .copyRow{
-      display:flex;
-      gap:10px;
-      margin-top: 10px;
+      direction:ltr;
+      margin-bottom: 10px;
     }
     .copyBtn{
-      flex:1;
+      width:100%;
       border:none;
       cursor:pointer;
-      border-radius: 12px;
-      padding: 12px 10px;
+      border-radius: 18px;
+      padding: 12px 16px;
+      font-size: 26px;
+      font-weight: 1000;
+      color:#111;
+      border: 5px solid rgba(0,0,0,.90);
+      background: #f4c400;
+      box-shadow: 0 10px 0 rgba(0,0,0,.22);
+      transform: translateY(0);
+    }
+    .copyBtn:active{transform: translateY(3px)}
+    .hint{
+      text-align:center;
+      font-size: 16px;
       font-weight: 900;
-      font-size: 18px;
-      background: #1f4fa3;
-      color:#fff;
-    }
-    .qrWrap{
-      display:none;
-      margin-top: 12px;
-      text-align:center;
-    }
-    canvas{max-width:100%}
-    .tiny{
-      margin-top: 8px;
-      font-size: 13px;
-      opacity:.8;
-      text-align:center;
+      opacity:.90;
+      margin-top: 10px;
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <img class="logo" src="logo.PNG" alt="صندوق المسابقات">
+  <div class="outer" style="display:flex;flex-direction:column;">
+    <img class="logo" src="logo.PNG" alt="صندوق المسابقات" />
 
-    <h1>لعبة تخمين الصور</h1>
+    <div class="title">لعبة تخمين الصور</div>
 
     <div class="frame">
       <div class="label">اللاعب الأول</div>
-      <input id="p1" class="in" type="text" placeholder="اكتب اسمك هنا.." autocomplete="off" />
-
-      <div class="spacer"></div>
+      <input id="hostName" class="input" type="text" placeholder="اكتب اسمك هنا.." autocomplete="off" />
 
       <div class="subLabel">اللاعب الثاني</div>
-      <input id="p2" class="in" type="text" placeholder="بانتظار انضمام اللاعب الثاني..." readonly />
-      
-      <div class="spacer"></div>
+      <!-- ✅ فقط إضافة placeholder واضح (بدون تغيير ستايل) -->
+      <input id="player2Box" class="input2" type="text" placeholder="بانتظار انضمام اللاعب الثاني..." value="" disabled />
 
-      <div class="subLabel">طرق مشاركة اللاعبين</div>
-      <div class="row">
-        <button id="btnQR" class="btn btn-blue" type="button">باركود</button>
-        <button id="btnLink" class="btn btn-brown" type="button">رابط</button>
+      <div class="shareTitle">طرق مشاركة اللاعبين</div>
+      <div class="shareRow">
+        <!-- نفس ترتيب الصورة: رابط يسار / باركود يمين -->
+        <button id="btnLink" class="btn brown" type="button">رابط</button>
+        <button id="btnQR" class="btn blue" type="button">باركود</button>
       </div>
     </div>
 
     <div class="startWrap">
-      <button id="btnStart" class="btnStart" disabled>ابدأ اللعب</button>
+      <button id="btnStart" class="btnStart" type="button" disabled>ابدأ اللعب</button>
     </div>
 
     <div class="footer">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
   </div>
 
-  <!-- Modal -->
-  <div id="overlay" class="overlay" aria-hidden="true">
+  <div id="modalOverlay" class="modalOverlay" role="dialog" aria-modal="true">
     <div class="modal">
-      <div class="modalTop">
-        <div id="modalTitle" class="modalTitle">مشاركة الرابط</div>
-        <button id="closeModal" class="closeBtn" type="button">إغلاق</button>
+      <button id="closeModal" class="closeX" type="button">×</button>
+      <div id="modalTitle" class="modalTitle">مشاركة اللعبة</div>
+
+      <div id="qrArea" style="display:none;">
+        <div class="qrBox"><div id="qrcode"></div></div>
       </div>
 
-      <input id="shareLink" class="linkBox" readonly />
-
-      <div class="copyRow">
+      <div id="linkArea" style="display:none;">
+        <div id="linkText" class="linkBox"></div>
         <button id="copyBtn" class="copyBtn" type="button">نسخ الرابط</button>
       </div>
 
-      <div id="qrWrap" class="qrWrap">
-        <canvas id="qrCanvas"></canvas>
-      </div>
-
-      <div class="tiny">انسخ الرابط أو امسح الباركود من جهاز اللاعب الثاني</div>
+      <div class="hint">انقر خارج النافذة للإغلاق</div>
     </div>
   </div>
 
-  <!-- QR lib -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
-  <script type="module">
-    // =========================
-    // Firebase (نفس مشروع برا السالفة)
-    // =========================
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDYxoP7QEy3ShH_KOTx19jqj3IbWGTEOd0",
       authDomain: "bara-alsalfah-eu.firebaseapp.com",
@@ -351,163 +375,213 @@
       measurementId: "G-HKJGX94BJD"
     };
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, doc, setDoc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
-
-    // =========================
-    // Helpers
-    // =========================
     const $ = (id) => document.getElementById(id);
 
     function genRoomId(){
-      // 6 أرقام
-      return String(Math.floor(100000 + Math.random() * 900000));
+      return String(Math.floor(100000 + Math.random()*900000));
     }
 
-    function buildJoinLink(roomId){
-      // رابط join.html بنفس المسار
-      const here = new URL(window.location.href);
-      here.search = "";
-      const basePath = here.pathname.endsWith("/") ? here.pathname : here.pathname.replace(/\/[^\/]*$/, "/");
-      const joinUrl = new URL(basePath + "join.html", window.location.origin);
-      joinUrl.searchParams.set("room", roomId);
-      return joinUrl.toString();
+    function sanitizeName(s){
+      return (s || "").trim().replace(/\s+/g,' ').slice(0,18);
     }
 
-    // =========================
-    // UI Elements
-    // =========================
-    const p1 = $("p1");
-    const p2 = $("p2");
+    function getJoinLink(roomId){
+      const base = location.origin + location.pathname.replace(/index\.html?$/i,'');
+      return base + "join.html?room=" + encodeURIComponent(roomId);
+    }
+
+    let roomId = sessionStorage.getItem("khamn_roomId") || "";
+    let unsub = null;
+
+    const hostName = $("hostName");
+    const player2Box = $("player2Box");
     const btnStart = $("btnStart");
     const btnQR = $("btnQR");
     const btnLink = $("btnLink");
 
-    const overlay = $("overlay");
+    const modalOverlay = $("modalOverlay");
     const closeModal = $("closeModal");
     const modalTitle = $("modalTitle");
-    const shareLinkInput = $("shareLink");
+    const qrArea = $("qrArea");
+    const linkArea = $("linkArea");
+    const linkText = $("linkText");
     const copyBtn = $("copyBtn");
-    const qrWrap = $("qrWrap");
-    const qrCanvas = $("qrCanvas");
+    const qrcodeEl = $("qrcode");
 
     function openModal(mode){
-      overlay.classList.add("show");
-      overlay.setAttribute("aria-hidden","false");
-
+      modalOverlay.style.display = "flex";
       if(mode === "qr"){
-        modalTitle.textContent = "باركود المشاركة";
-        qrWrap.style.display = "block";
-        // رسم QR
-        QRCode.toCanvas(qrCanvas, shareLinkInput.value, { width: 260 }, (err)=>{});
+        modalTitle.textContent = "مشاركة عبر الباركود";
+        qrArea.style.display = "block";
+        linkArea.style.display = "none";
       }else{
-        modalTitle.textContent = "رابط المشاركة";
-        qrWrap.style.display = "none";
+        modalTitle.textContent = "مشاركة عبر الرابط";
+        qrArea.style.display = "none";
+        linkArea.style.display = "block";
       }
     }
-    function close(){
-      overlay.classList.remove("show");
-      overlay.setAttribute("aria-hidden","true");
+    function closeModalFn(){
+      modalOverlay.style.display = "none";
     }
-    closeModal.addEventListener("click", close);
-    overlay.addEventListener("click", (e)=>{ if(e.target === overlay) close(); });
+
+    modalOverlay.addEventListener("click", (e)=>{
+      if(e.target === modalOverlay) closeModalFn();
+    });
+    closeModal.addEventListener("click", closeModalFn);
+
+    // ✅ التعديل المهم: قراءة اسم اللاعب الثاني من أكثر من مكان
+    function extractPlayer2(data){
+      // 1) الأساس
+      let p2 = (data.player2Name || "").trim();
+
+      // 2) احتمالات أخرى (لو join يكتب اسم مختلف)
+      if(!p2) p2 = (data.player2 || "").trim();
+      if(!p2 && data.player2 && typeof data.player2 === "object") {
+        p2 = ((data.player2.name || "").trim());
+      }
+
+      // 3) لو join يكتب داخل players[]
+      if(!p2 && Array.isArray(data.players)){
+        const hn = (data.hostName || sanitizeName(hostName.value) || "").trim();
+        const names = data.players
+          .map(p => (typeof p === "string" ? p : (p && p.name) ? p.name : ""))
+          .map(s => (s || "").trim())
+          .filter(Boolean);
+
+        // خذ أول اسم ليس هو المقدم إن وجد
+        p2 = (names.find(n => n !== hn) || names[1] || names[0] || "").trim();
+      }
+
+      return p2;
+    }
+
+    async function ensureRoom(){
+      if(!roomId){
+        roomId = genRoomId();
+        sessionStorage.setItem("khamn_roomId", roomId);
+      }
+
+      const ref = db.collection("khamnRooms").doc(roomId);
+
+      const snap = await ref.get();
+      if(!snap.exists){
+        await ref.set({
+          roomId,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          hostName: "",
+          player2Name: "",
+          status: "lobby",
+          gameStarted: false,
+          startedAt: null
+        }, { merge:true });
+      }
+
+      if(unsub) unsub();
+      unsub = ref.onSnapshot((doc)=>{
+        if(!doc.exists) return;
+        const data = doc.data() || {};
+
+        const p2 = extractPlayer2(data);
+
+        if(p2){
+          player2Box.value = p2;
+          btnStart.disabled = !(sanitizeName(hostName.value) && p2);
+        }else{
+          player2Box.value = "";
+          btnStart.disabled = true;
+        }
+
+        if(data.gameStarted === true){
+          const url = "game.html?room=" + encodeURIComponent(roomId) + "&role=host";
+          if(!location.href.includes("game.html")) location.href = url;
+        }
+      });
+
+      return ref;
+    }
+
+    // ✅ حماية: لا تكتب على فايربيس قبل إنشاء roomId
+    hostName.addEventListener("input", async ()=>{
+      if(!roomId) return;
+      const name = sanitizeName(hostName.value);
+      const ref = db.collection("khamnRooms").doc(roomId);
+      await ref.set({ hostName: name }, { merge:true });
+    });
+
+    btnLink.addEventListener("click", ()=>{
+      if(!roomId) return;
+      const link = getJoinLink(roomId);
+      linkText.textContent = link;
+      openModal("link");
+    });
+
+    btnQR.addEventListener("click", ()=>{
+      if(!roomId) return;
+      const link = getJoinLink(roomId);
+      qrcodeEl.innerHTML = "";
+      new QRCode(qrcodeEl, {
+        text: link,
+        width: 220,
+        height: 220,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      openModal("qr");
+    });
 
     copyBtn.addEventListener("click", async ()=>{
+      const link = linkText.textContent.trim();
       try{
-        await navigator.clipboard.writeText(shareLinkInput.value);
+        await navigator.clipboard.writeText(link);
         copyBtn.textContent = "تم النسخ ✅";
-        setTimeout(()=> copyBtn.textContent = "نسخ الرابط", 900);
+        setTimeout(()=> copyBtn.textContent="نسخ الرابط", 1200);
       }catch(e){
-        // fallback
-        shareLinkInput.select();
+        const ta = document.createElement("textarea");
+        ta.value = link;
+        document.body.appendChild(ta);
+        ta.select();
         document.execCommand("copy");
+        document.body.removeChild(ta);
         copyBtn.textContent = "تم النسخ ✅";
-        setTimeout(()=> copyBtn.textContent = "نسخ الرابط", 900);
+        setTimeout(()=> copyBtn.textContent="نسخ الرابط", 1200);
       }
     });
 
-    // =========================
-    // Room logic (Host)
-    // =========================
-    const roomId = genRoomId();
-    const roomRef = doc(db, "khamnRooms", roomId);
-    const joinLink = buildJoinLink(roomId);
-
-    shareLinkInput.value = joinLink;
-
-    // Create room doc
-    await setDoc(roomRef, {
-      roomId,
-      createdAt: serverTimestamp(),
-      status: "lobby",
-      player1Name: "",
-      player2Name: "",
-      startedAt: null
-    }, { merge: true });
-
-    // Listen updates
-    onSnapshot(roomRef, (snap)=>{
-      if(!snap.exists()) return;
-      const data = snap.data() || {};
-
-      // تحديث اسم اللاعب الثاني
-      const n2 = (data.player2Name || "").trim();
-      if(n2){
-        p2.value = n2;
-        btnStart.disabled = false;
-      }else{
-        p2.value = "";
-        p2.placeholder = "بانتظار انضمام اللاعب الثاني...";
-        btnStart.disabled = true;
-      }
-
-      // إذا بدأ اللعب (احتياط)
-      if(data.status === "playing"){
-        const url = new URL("game.html", window.location.href);
-        url.searchParams.set("room", roomId);
-        url.searchParams.set("role", "host");
-        window.location.href = url.toString();
-      }
-    });
-
-    // حفظ اسم اللاعب الأول
-    let nameTimer = null;
-    p1.addEventListener("input", ()=>{
-      clearTimeout(nameTimer);
-      nameTimer = setTimeout(async ()=>{
-        const n1 = (p1.value || "").trim();
-        await updateDoc(roomRef, { player1Name: n1 });
-      }, 250);
-    });
-
-    // Share buttons
-    btnLink.addEventListener("click", ()=> openModal("link"));
-    btnQR.addEventListener("click", ()=> openModal("qr"));
-
-    // Start
     btnStart.addEventListener("click", async ()=>{
-      const n1 = (p1.value || "").trim();
-      if(!n1){
-        p1.focus();
+      const name = sanitizeName(hostName.value);
+      if(!name) return;
+
+      const ref = db.collection("khamnRooms").doc(roomId);
+      const snap = await ref.get();
+      const data = snap.data() || {};
+      const p2 = extractPlayer2(data);
+
+      if(!p2){
+        btnStart.disabled = true;
         return;
       }
-      await updateDoc(roomRef, {
-        status: "playing",
-        startedAt: serverTimestamp()
-      });
-      const url = new URL("game.html", window.location.href);
-      url.searchParams.set("room", roomId);
-      url.searchParams.set("role", "host");
-      window.location.href = url.toString();
+
+      await ref.set({
+        hostName: name,
+        status: "game",
+        gameStarted: true,
+        startedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge:true });
+
+      location.href = "game.html?room=" + encodeURIComponent(roomId) + "&role=host";
     });
 
+    (async function(){
+      await ensureRoom();
+      const current = sanitizeName(hostName.value);
+      if(current){
+        await db.collection("khamnRooms").doc(roomId).set({ hostName: current }, { merge:true });
+      }
+    })();
   </script>
 </body>
 </html>
 
-<!--
-اسم النسخة: index.html (خمن الصورة) – إصدار 1
--->
+<!-- اسم النسخة: index.html (تخمين الصور) – إصدار 7 -->
