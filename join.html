@@ -1,1 +1,418 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>تخمين الصور - دخول اللاعب</title>
 
+  <style>
+    :root{
+      --bg1:#3b1458;
+      --bg2:#6b2c8c;
+      --card:#7c4b93;
+      --panel:#5c2b7d;
+      --white:#fff;
+      --black:#111;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --stroke:#000;
+      --input:#f6f6f6;
+      --muted:rgba(255,255,255,.65);
+      --green:#00c06a;
+      --green2:#00a85e;
+      --yellow:#f4c400;
+      --btnBrown:#5a1d00;
+      --btnBlue:#77aab3;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 50% 10%, rgba(255,255,255,.08), transparent 60%),
+                  linear-gradient(180deg, var(--bg2), var(--bg1));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 18px 14px calc(18px + env(safe-area-inset-bottom));
+      color:var(--white);
+    }
+
+    .wrap{
+      width:min(560px, 96vw);
+      background: rgba(255,255,255,.08);
+      border-radius: 26px;
+      padding: 18px 16px 22px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .logo{
+      position:absolute;
+      top: 14px;
+      left: 14px;
+      width: 76px;
+      height: 76px;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,.35));
+      pointer-events:none;
+      user-select:none;
+    }
+
+    .title{
+      text-align:center;
+      margin: 36px 10px 18px;
+      font-weight:900;
+      font-size: clamp(34px, 6.5vw, 54px);
+      letter-spacing:.5px;
+      text-shadow:
+        0 3px 0 rgba(0,0,0,.45),
+        0 10px 28px rgba(0,0,0,.35);
+      -webkit-text-stroke: 2px rgba(0,0,0,.18);
+    }
+
+    .panel{
+      background: radial-gradient(900px 500px at 50% 10%, rgba(255,255,255,.10), transparent 55%),
+                  linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.22));
+      border-radius: 24px;
+      padding: 22px 18px 18px;
+    }
+
+    .card{
+      background: radial-gradient(700px 350px at 50% 10%, rgba(255,255,255,.12), transparent 55%),
+                  linear-gradient(180deg, #53206f, #3c0f56);
+      border-radius: 26px;
+      border: 4px solid rgba(0,0,0,.70);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.08);
+      padding: 18px 16px 16px;
+      margin: 10px auto 18px;
+    }
+
+    .label{
+      text-align:center;
+      font-weight:900;
+      font-size: clamp(28px, 5.5vw, 42px);
+      margin: 4px 0 14px;
+      text-shadow: 0 10px 20px rgba(0,0,0,.35);
+    }
+
+    .input{
+      width:100%;
+      height: 64px;
+      border-radius: 18px;
+      border: 4px solid rgba(0,0,0,.85);
+      background: var(--input);
+      padding: 0 18px;
+      font-size: 26px;
+      font-weight: 800;
+      outline:none;
+      text-align:center;
+      box-shadow: 0 10px 18px rgba(0,0,0,.25);
+    }
+    .input::placeholder{color:#777;font-weight:800}
+
+    .hint{
+      margin: 10px 0 0;
+      text-align:center;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 14px;
+      line-height:1.5;
+    }
+
+    .btnRow{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+      align-items:center;
+      justify-content:center;
+      margin-top: 6px;
+    }
+
+    .btn{
+      border: 4px solid rgba(0,0,0,.85);
+      border-radius: 22px;
+      padding: 14px 18px;
+      font-size: 34px;
+      font-weight: 1000;
+      width: min(330px, 92%);
+      cursor:pointer;
+      box-shadow: 0 16px 28px rgba(0,0,0,.28);
+      transition: transform .08s ease, filter .15s ease, opacity .2s ease;
+      user-select:none;
+    }
+    .btn:active{transform: translateY(1px) scale(.995)}
+    .btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      filter:saturate(.75);
+    }
+
+    .btnReady{
+      background: linear-gradient(180deg, var(--green), var(--green2));
+      color:#fff;
+      text-shadow: 0 3px 0 rgba(0,0,0,.35);
+    }
+
+    .btnBuy{
+      background: linear-gradient(180deg, #ffd35c, var(--yellow));
+      color:#111;
+      text-shadow:none;
+      font-size: 28px;
+      width: min(420px, 96%);
+      border-radius: 26px;
+    }
+
+    .waitBox{
+      margin-top: 12px;
+      text-align:center;
+      font-weight:900;
+      color: rgba(255,255,255,.88);
+      font-size: 18px;
+      line-height:1.6;
+      min-height: 54px;
+    }
+
+    .tiny{
+      text-align:center;
+      margin-top: 14px;
+      font-weight:900;
+      font-size: 14px;
+      color: rgba(255,255,255,.92);
+      white-space: nowrap;
+    }
+
+    /* شاشة تحميل خفيفة */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.25);
+      display:none;
+      align-items:center; justify-content:center;
+      padding: 20px;
+    }
+    .overlay.show{display:flex;}
+    .pill{
+      background: rgba(0,0,0,.55);
+      border: 2px solid rgba(255,255,255,.18);
+      color:#fff;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-weight: 900;
+      text-align:center;
+      width:min(420px, 92vw);
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+    }
+
+    @media (max-width:420px){
+      .logo{width:70px;height:70px; top:12px; left:12px}
+      .input{height:60px; font-size:24px}
+      .btn{font-size:32px}
+      .btnBuy{font-size:26px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <!-- غيّر الاسم إذا ملفك اسمه logo.PNG أو logo.png -->
+    <img class="logo" src="logo.PNG" alt="صندوق المسابقات" />
+
+    <div class="title">لعبة تخمين الصور</div>
+
+    <div class="panel">
+      <div class="card">
+        <div class="label">اكتب اسمك</div>
+        <input id="nameInput" class="input" placeholder="اكتب اسمك هنا.." maxlength="20" autocomplete="off" />
+        <div class="hint" id="roomHint"></div>
+      </div>
+
+      <div class="btnRow">
+        <button id="readyBtn" class="btn btnReady" disabled>جاهز</button>
+        <button id="buyBtn" class="btn btnBuy" type="button">لشراء اللعبة اضغط هنا</button>
+      </div>
+
+      <div class="waitBox" id="statusText">بانتظار إدخال الاسم…</div>
+
+      <div class="tiny" id="copyrightText">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="pill" id="overlayText">جارٍ الاتصال…</div>
+  </div>
+
+  <script type="module">
+    // ========= Firebase (نفس مشروع برا السالفة) =========
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot,
+      serverTimestamp, arrayUnion
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDYxoP7QEy3ShH_KOTx19jqj3IbWGTEOd0",
+      authDomain: "bara-alsalfah-eu.firebaseapp.com",
+      projectId: "bara-alsalfah-eu",
+      storageBucket: "bara-alsalfah-eu.firebasestorage.app",
+      messagingSenderId: "657928540352",
+      appId: "1:657928540352:web:dcf15096ac8501326e9d25",
+      measurementId: "G-HKJGX94BJD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ========= Helpers =========
+    const $ = (id) => document.getElementById(id);
+
+    function getRoomId(){
+      const u = new URL(location.href);
+      return (u.searchParams.get("r") || u.searchParams.get("room") || u.searchParams.get("id") || "").trim();
+    }
+
+    function makePlayerId(){
+      // ثابت للجهاز (عشان ما يتكرر اللاعب)
+      const k = "khamn_playerId";
+      let v = localStorage.getItem(k);
+      if(!v){
+        v = "p_" + Math.random().toString(16).slice(2) + Date.now().toString(16);
+        localStorage.setItem(k, v);
+      }
+      return v;
+    }
+
+    function cleanName(s){
+      return (s || "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 20);
+    }
+
+    function showOverlay(msg){
+      $("overlayText").textContent = msg || "جارٍ الاتصال…";
+      $("overlay").classList.add("show");
+    }
+    function hideOverlay(){
+      $("overlay").classList.remove("show");
+    }
+
+    // ========= UI refs =========
+    const roomId = getRoomId();
+    const playerId = makePlayerId();
+
+    $("roomHint").textContent = roomId ? `رقم الغرفة: ${roomId}` : "⚠️ الرابط ناقص (ما فيه رقم غرفة).";
+    $("statusText").textContent = roomId ? "اكتب اسمك ثم اضغط (جاهز)" : "ما أقدر أكمل بدون رقم غرفة.";
+
+    const nameInput = $("nameInput");
+    const readyBtn  = $("readyBtn");
+    const buyBtn    = $("buyBtn");
+
+    if(!roomId){
+      nameInput.disabled = true;
+      readyBtn.disabled = true;
+    }
+
+    // شراء اللعبة
+    buyBtn.addEventListener("click", () => {
+      window.open("https://sandooq-m.com", "_blank", "noopener,noreferrer");
+    });
+
+    // تفعيل زر جاهز بعد الاسم
+    nameInput.addEventListener("input", () => {
+      const nm = cleanName(nameInput.value);
+      readyBtn.disabled = !(nm.length >= 2) || !roomId;
+      $("statusText").textContent = nm.length >= 2 ? "اضغط (جاهز) وانتظر المقدم يبدأ اللعب…" : "بانتظار إدخال الاسم…";
+    });
+
+    // ========= Room doc =========
+    const roomRef = doc(db, "khamnRooms", roomId);
+
+    let unsub = null;
+    let alreadyListening = false;
+
+    async function ensureRoomExists(){
+      const snap = await getDoc(roomRef);
+      return snap.exists();
+    }
+
+    async function markReady(){
+      const nm = cleanName(nameInput.value);
+      if(nm.length < 2) return;
+
+      showOverlay("جارٍ تسجيل دخولك…");
+
+      // نتأكد أن الغرفة موجودة
+      const ok = await ensureRoomExists();
+      if(!ok){
+        hideOverlay();
+        $("statusText").textContent = "⚠️ الغرفة غير موجودة (خلّ المقدم يفتح اللوبي أولاً).";
+        return;
+      }
+
+      // نسجل اللاعب داخل الغرفة
+      // (نستخدم playersMap: داخل doc -> players.{playerId} = {name, joinedAt, ready:true})
+      // ملاحظة: Firestore ما يسمح update لحقول ديناميكية بسهولة بدون object
+      // لذلك بنستخدم playersArr للتوافق: [{id,name,joinedAt,ready}]
+      // + readyIds كقائمة سريعة
+      const playerObj = { id: playerId, name: nm, joinedAt: Date.now(), ready: true };
+
+      await updateDoc(roomRef, {
+        playersArr: arrayUnion(playerObj),
+        readyIds: arrayUnion(playerId),
+        updatedAt: serverTimestamp()
+      });
+
+      nameInput.disabled = true;
+      readyBtn.disabled = true;
+      readyBtn.textContent = "تم";
+      $("statusText").textContent = "✅ تم… الآن انتظر المقدم يبدأ اللعب";
+
+      hideOverlay();
+
+      if(!alreadyListening){
+        listenRoom();
+      }
+    }
+
+    readyBtn.addEventListener("click", markReady);
+
+    function listenRoom(){
+      alreadyListening = true;
+      unsub?.();
+      unsub = onSnapshot(roomRef, (snap) => {
+        if(!snap.exists()){
+          $("statusText").textContent = "⚠️ الغرفة انحذفت أو غير موجودة.";
+          return;
+        }
+        const data = snap.data() || {};
+        // متى يبدأ اللعب؟ نعتمد أي واحد من هذي
+        const started = data.status === "started" || !!data.startedAt || data.phase === "game";
+        if(started){
+          // ندخل صفحة اللعب
+          const url = new URL("game.html", location.href);
+          url.searchParams.set("r", roomId);
+          url.searchParams.set("role", "player");
+          url.searchParams.set("pid", playerId);
+          location.href = url.toString();
+        }else{
+          // تحديث انتظار
+          $("statusText").textContent = "بانتظار المقدم يبدأ اللعب…";
+        }
+      });
+    }
+
+    // نستمع من البداية إذا الغرفة موجودة
+    (async () => {
+      if(!roomId) return;
+      const ok = await ensureRoomExists();
+      if(ok) listenRoom();
+    })();
+
+    // حماية بسيطة: لو ترك الصفحة
+    window.addEventListener("beforeunload", () => {
+      unsub?.();
+    });
+  </script>
+</body>
+</html>
