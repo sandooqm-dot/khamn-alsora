@@ -9,7 +9,6 @@
     :root{
       --page:#7a4a93;
       --panel:#7a4a93;
-      --inner:#5f2a7a;
 
       --black:#000;
       --white:#fff;
@@ -42,7 +41,7 @@
       min-height: min(980px, 92vh);
       background: var(--panel);
       border-radius: 42px;
-      padding: 20px 18px 18px;
+      padding: 22px 18px 18px;
       position:relative;
       overflow:hidden;
       display:flex;
@@ -50,57 +49,17 @@
       gap: 14px;
     }
 
-    /* شريط علوي: أدوات المقدم فقط */
-    .topBar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      min-height: 62px;
-    }
-
+    /* ✅ اللوجو: أعلى اليسار + أكبر */
     .logo{
-      width: 86px;
+      position:absolute;
+      top: 16px;
+      left: 16px;
+      width: 118px;
       height:auto;
       pointer-events:none;
       user-select:none;
       filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
-    }
-
-    .hostTools{
-      display:none; /* يظهر فقط للمقدم */
-      gap: 10px;
-      align-items:center;
-      justify-content:flex-start;
-    }
-
-    .toolBtn{
-      border:none;
-      cursor:pointer;
-      border-radius: 18px;
-      padding: 10px 14px;
-      font-size: 18px;
-      font-weight: 1000;
-      border: 4px solid rgba(0,0,0,.90);
-      box-shadow: 0 10px 0 rgba(0,0,0,.22);
-      transform: translateY(0);
-      transition: transform .06s ease, opacity .15s ease;
-      white-space:nowrap;
-    }
-    .toolBtn:active{transform: translateY(3px)}
-    .toolBtn.home{
-      background: linear-gradient(180deg, #ffffff, #f0f0f0);
-      color:#111;
-    }
-    .toolBtn.round{
-      background: linear-gradient(180deg, var(--btnGreen), var(--btnGreen2));
-      color:#fff;
-      text-shadow: 0 3px 0 rgba(0,0,0,.28);
-    }
-    .toolBtn:disabled{
-      opacity:.45;
-      cursor:not-allowed;
-      transform: translateY(0);
+      z-index: 5;
     }
 
     /* العنوان */
@@ -108,7 +67,7 @@
       text-align:center;
       font-size: clamp(40px, 7.5vw, 64px);
       font-weight: 1000;
-      margin: 4px 0 8px;
+      margin: 96px 0 6px; /* ينزل تحت اللوجو */
       color:#fff;
       text-shadow:
         -2px -2px 0 rgba(0,0,0,.35),
@@ -119,29 +78,10 @@
       white-space:nowrap;
     }
 
-    /* شريط أسماء اللاعبين */
-    .namesRow{
-      display:flex;
-      gap: 10px;
-      justify-content:center;
-      align-items:center;
-      flex-wrap:wrap;
-      opacity:.98;
-      font-weight: 1000;
-    }
-    .nameTag{
-      border: 4px solid rgba(0,0,0,.90);
-      background: rgba(0,0,0,.14);
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-size: 18px;
-      box-shadow: 0 10px 0 rgba(0,0,0,.20);
-    }
-
-    /* كبسولة اسم اللاعب الحالي (مثل الصورة) */
+    /* كبسولة اسم اللاعب الحالي */
     .bigNamePill{
       margin: 6px auto 8px;
-      width: min(360px, 88%);
+      width: min(520px, 92%);
       text-align:center;
       border-radius: 999px;
       border: 5px solid rgba(0,0,0,.90);
@@ -160,7 +100,6 @@
       margin: 0 auto;
       background: #fff;
       border-radius: 26px;
-      border: 0;
       min-height: 520px;
       display:flex;
       align-items:center;
@@ -187,6 +126,36 @@
       object-fit: contain;
       display:none;
       background:#fff;
+    }
+
+    /* ✅ زر جولة جديدة: بالمنتصف أسفل الصورة + مسافة */
+    .roundCenterWrap{
+      display:none; /* يظهر للمقدم فقط */
+      justify-content:center;
+      margin-top: 18px;
+    }
+    .roundBtn{
+      border:none;
+      cursor:pointer;
+      border-radius: 18px;
+      padding: 10px 18px;
+      font-size: 18px;
+      font-weight: 1000;
+      border: 4px solid rgba(0,0,0,.90);
+      box-shadow: 0 10px 0 rgba(0,0,0,.22);
+      transform: translateY(0);
+      transition: transform .06s ease, opacity .15s ease;
+      background: linear-gradient(180deg, var(--btnGreen), var(--btnGreen2));
+      color:#fff;
+      text-shadow: 0 3px 0 rgba(0,0,0,.28);
+      white-space:nowrap;
+      min-width: 170px;
+    }
+    .roundBtn:active{transform: translateY(3px)}
+    .roundBtn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform: translateY(0);
     }
 
     /* أزرار أسفل */
@@ -233,6 +202,33 @@
       min-height: 22px;
     }
 
+    /* ✅ زر الرئيسية: أيقونة منزل صغيرة أسفل يسار */
+    .homeIcon{
+      position: fixed;
+      left: 14px;
+      bottom: calc(14px + env(safe-area-inset-bottom));
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      border: 4px solid rgba(0,0,0,.90);
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 12px 0 rgba(0,0,0,.22);
+      display:none; /* يظهر للمقدم فقط */
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      z-index: 9998;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .homeIcon:active{transform: translateY(3px)}
+    .homeIcon span{
+      font-size: 26px;
+      line-height: 1;
+      color:#111;
+      font-weight: 1000;
+    }
+
     /* شاشة خفيفة */
     .overlay{
       position:fixed; inset:0;
@@ -260,32 +256,18 @@
       .photoBox{min-height: 430px}
       .photoHint{font-size: 28px}
       .buyBtn{font-size: 28px}
-      .logo{width:78px}
-      .toolBtn{font-size:16px}
+      .logo{width:108px}
     }
   </style>
 </head>
 
 <body>
   <div class="outer">
-    <div class="topBar">
-      <!-- لوجو -->
-      <img class="logo" src="logo.PNG" alt="صندوق المسابقات" />
-
-      <!-- أدوات المقدم -->
-      <div class="hostTools" id="hostTools">
-        <button class="toolBtn home" id="btnHome" type="button">🏠 الرئيسية</button>
-        <button class="toolBtn round" id="btnNewRound" type="button">🔄 جولة جديدة</button>
-      </div>
-    </div>
+    <img class="logo" src="logo.PNG" alt="صندوق المسابقات" />
 
     <div class="title">لعبة تخمين الصور</div>
 
-    <div class="namesRow" id="namesRow">
-      <div class="nameTag" id="hostTag">المقدم: ...</div>
-      <div class="nameTag" id="playerTag">اللاعب: ...</div>
-    </div>
-
+    <!-- ✅ باقي بس كبسولة الاسم -->
     <div class="bigNamePill" id="myNamePill">...</div>
 
     <div class="photoBox" id="photoBox" title="اضغط لإضافة صورة">
@@ -294,12 +276,22 @@
       <input id="fileInput" type="file" accept="image/*" style="display:none" />
     </div>
 
+    <!-- ✅ زر جولة جديدة بالمنتصف أسفل الصورة -->
+    <div class="roundCenterWrap" id="roundCenterWrap">
+      <button class="roundBtn" id="btnNewRound" type="button">جولة جديدة</button>
+    </div>
+
     <div class="status" id="statusText"></div>
 
     <div class="bottomArea">
       <button class="buyBtn" id="buyBtn" type="button">لشراء اللعبة اضغط هنا</button>
       <div class="footer">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
     </div>
+  </div>
+
+  <!-- ✅ الرئيسية أسفل يسار للمقدم فقط -->
+  <div class="homeIcon" id="homeIcon" title="الرئيسية">
+    <span>🏠</span>
   </div>
 
   <div class="overlay" id="overlay">
@@ -333,11 +325,9 @@
       const u = new URL(location.href);
       return (u.searchParams.get(key) || "").trim();
     }
-
     function getRoomId(){
       return getParam("r") || getParam("room") || getParam("id");
     }
-
     function getRole(){
       const r = (getParam("role") || "").toLowerCase();
       return (r === "host") ? "host" : "player";
@@ -347,21 +337,17 @@
     const role = getRole();
     const pid  = getParam("pid");
 
-    const hostTools = $("hostTools");
-    const btnHome = $("btnHome");
-    const btnNewRound = $("btnNewRound");
-
-    const hostTag = $("hostTag");
-    const playerTag = $("playerTag");
     const myNamePill = $("myNamePill");
-
     const photoBox = $("photoBox");
     const fileInput = $("fileInput");
     const previewImg = $("previewImg");
     const photoHint = $("photoHint");
-
     const statusText = $("statusText");
+
     const buyBtn = $("buyBtn");
+    const roundCenterWrap = $("roundCenterWrap");
+    const btnNewRound = $("btnNewRound");
+    const homeIcon = $("homeIcon");
 
     function showOverlay(msg){
       $("overlayText").textContent = msg || "جارٍ الاتصال…";
@@ -376,9 +362,12 @@
       window.open("https://sandooq-m.com", "_blank", "noopener,noreferrer");
     });
 
-    // إظهار أدوات المقدم فقط
+    // ✅ للمقدم فقط: إظهار زر جولة جديدة + زر الرئيسية
     if(role === "host"){
-      hostTools.style.display = "flex";
+      roundCenterWrap.style.display = "flex";
+      homeIcon.style.display = "flex";
+      // ✅ حذف زر الشراء من صفحة المقدم
+      buyBtn.style.display = "none";
     }
 
     // رفع صورة محلي فقط
@@ -429,17 +418,13 @@
     let currentRoundId = null;
 
     function pickPlayerName(data){
-      // 1) من playersArr لو موجود (أفضل)
       const arr = Array.isArray(data?.playersArr) ? data.playersArr : [];
       if(pid && arr.length){
         const me = arr.find(x => x && x.id === pid && (x.name || "").trim());
         if(me) return String(me.name).trim();
       }
-
-      // 2) من player2Name لو موجود
       if((data?.player2Name || "").trim()) return String(data.player2Name).trim();
 
-      // 3) آخر لاعب مختلف عن hostName
       const host = String(data?.hostName || "").trim();
       const last = [...arr].reverse().find(x => x && (x.name || "").trim() && String(x.name).trim() !== host);
       if(last) return String(last.name).trim();
@@ -447,13 +432,9 @@
       return "اللاعب";
     }
 
-    function renderNames(data){
+    function renderMyName(data){
       const host = String(data?.hostName || "").trim() || "المقدم";
       const player = pickPlayerName(data);
-
-      hostTag.textContent = "المقدم: " + host;
-      playerTag.textContent = "اللاعب: " + player;
-
       myNamePill.textContent = (role === "host") ? host : player;
     }
 
@@ -462,7 +443,6 @@
 
       const snap = await getDoc(roomRef);
       if(!snap.exists()){
-        // نتركها بسيطة (يفترض المقدم منشئها من اللوبي)
         await setDoc(roomRef, {
           roomId,
           createdAt: serverTimestamp(),
@@ -486,9 +466,9 @@
         }
 
         const data = snap.data() || {};
-        renderNames(data);
+        renderMyName(data);
 
-        // مزامنة “جولة جديدة” فقط (بدون صور على Firebase)
+        // مزامنة “جولة جديدة” فقط
         const rid = String(data.roundId || "");
         if(rid && currentRoundId !== rid){
           currentRoundId = rid;
@@ -499,13 +479,7 @@
       });
     }
 
-    // زر الرئيسية (للمقدم فقط)
-    btnHome?.addEventListener("click", () => {
-      if(role !== "host") return;
-      location.href = "index.html";
-    });
-
-    // زر جولة جديدة (للمقدم فقط) -> يغيّر roundId في Firebase، والكل يمسح محلياً عند تغيّرها
+    // ✅ زر جولة جديدة (للمقدم فقط)
     btnNewRound?.addEventListener("click", async () => {
       if(role !== "host" || !roomRef) return;
       showOverlay("جارٍ بدء جولة جديدة…");
@@ -516,7 +490,6 @@
           updatedAt: serverTimestamp()
         });
       }catch(e){
-        // fallback لو ما كان الحقل موجود
         await setDoc(roomRef, {
           roundId: String(Date.now()),
           roundStartedAt: serverTimestamp(),
@@ -524,6 +497,36 @@
         }, { merge:true });
       }
       hideOverlay();
+    });
+
+    // ✅ زر الرئيسية: يمسح بيانات اللاعب/الجولة ثم يرجّع للصفحة الرئيسية (للمقدم فقط)
+    homeIcon?.addEventListener("click", async () => {
+      if(role !== "host") return;
+
+      showOverlay("جارٍ إنهاء الجلسة…");
+
+      try{
+        if(roomRef){
+          await setDoc(roomRef, {
+            player2Name: "",
+            playersArr: [],
+            readyIds: [],
+            status: "lobby",
+            gameStarted: false,
+            startedAt: null,
+            roundId: String(Date.now()),
+            updatedAt: serverTimestamp()
+          }, { merge:true });
+        }
+      }catch(e){
+        // نتجاهل أي خطأ بسيط
+      }
+
+      // يمسح روم المقدم محلياً عشان يبدأ من جديد
+      try{ sessionStorage.removeItem("khamn_roomId"); }catch(e){}
+
+      hideOverlay();
+      location.href = "index.html";
     });
 
     // تشغيل
@@ -535,7 +538,6 @@
       hideOverlay();
     })();
 
-    // تنظيف
     window.addEventListener("beforeunload", () => {
       unsub?.();
     });
@@ -543,4 +545,4 @@
 </body>
 </html>
 
-<!-- اسم النسخة: game.html (تخمين الصور) – إصدار 1 -->
+<!-- اسم النسخة: game.html (تخمين الصور) – إصدار 2 -->
