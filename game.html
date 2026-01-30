@@ -3,23 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>تخمين الصور - اللعب</title>
+  <title>لعبة تخمين الصور - اللعب</title>
 
   <style>
     :root{
       --page:#7a4a93;
       --panel:#7a4a93;
-
       --black:#000;
       --white:#fff;
-
-      --btnYellow:#f4c400;
-      --btnYellow2:#ffd35c;
 
       --btnGreen:#11c064;
       --btnGreen2:#0fb05b;
 
-      --muted: rgba(255,255,255,.85);
+      --btnYellow:#f4c400;
+      --btnYellow2:#ffd35c;
     }
 
     *{box-sizing:border-box}
@@ -36,7 +33,7 @@
     }
 
     .outer{
-      width:min(720px, 96vw);
+      width:min(760px, 96vw);
       min-height: min(980px, 92vh);
       background: var(--panel);
       border-radius: 42px;
@@ -48,15 +45,16 @@
       gap: 14px;
     }
 
+    /* ✅ اللوجو يسار أعلى */
     .logo{
       position:absolute;
       top: 16px;
       left: 16px;
-      width: 118px;
+      width: 120px;
       height:auto;
       pointer-events:none;
       user-select:none;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.22));
       z-index: 5;
     }
 
@@ -75,185 +73,152 @@
       white-space:nowrap;
     }
 
-    .bigNamePill{
-      margin: 6px auto 8px;
+    /* كبسولة اسم اللاعب (اللي فوق الصورة) */
+    .namePill{
+      margin: 2px auto 6px;
       width: min(520px, 92%);
       text-align:center;
       border-radius: 999px;
-      border: 5px solid rgba(0,0,0,.90);
-      background: radial-gradient(700px 220px at 50% 10%, rgba(255,255,255,.08), transparent 55%),
-                  linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.28));
-      box-shadow: 0 14px 0 rgba(0,0,0,.18);
-      padding: 12px 18px;
-      font-size: 42px;
+      padding: 18px 22px;
+      font-size: clamp(34px, 6.2vw, 54px);
       font-weight: 1000;
-      text-shadow: 0 4px 0 rgba(0,0,0,.22);
+      border: 6px solid rgba(0,0,0,.90);
+      background: linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.10));
+      box-shadow: 0 16px 22px rgba(0,0,0,.22);
+      text-shadow: 0 6px 0 rgba(0,0,0,.18);
     }
 
-    .photoBox{
-      width: min(650px, 96%);
-      margin: 0 auto;
-      background: #fff;
+    /* صندوق الصورة */
+    .imgFrame{
+      width:min(680px, 96%);
+      margin: 6px auto 0;
+      background:#fff;
       border-radius: 26px;
-      min-height: 520px;
+      border: 6px solid rgba(0,0,0,.90);
+      box-shadow: 0 18px 26px rgba(0,0,0,.18);
+      overflow:hidden;
+      position:relative;
+      aspect-ratio: 1.1 / 1; /* قريب من الشكل بالصورة */
       display:flex;
       align-items:center;
       justify-content:center;
-      position:relative;
-      overflow:hidden;
-      box-shadow: 0 24px 40px rgba(0,0,0,.20);
       cursor:pointer;
-    }
-    /* ✅ لما تنقفل الصورة: يصير شكلها غير قابل للنقر */
-    .photoBox.locked{
-      cursor: default;
-      opacity: .98;
-    }
-
-    .photoHint{
-      position:absolute;
-      inset:auto 14px auto 14px;
-      text-align:center;
-      color:#7a7a7a;
-      font-weight: 1000;
-      font-size: 34px;
-      text-shadow: 0 6px 0 rgba(0,0,0,.08);
       user-select:none;
-      pointer-events:none;
     }
 
-    .previewImg{
+    .imgFrame.locked{
+      cursor: default;
+      opacity: 1;
+    }
+
+    .placeholder{
+      color:#8b8b8b;
+      font-weight: 1000;
+      font-size: clamp(22px, 4.2vw, 34px);
+      text-align:center;
+      padding: 20px;
+    }
+
+    .imgPreview{
       width:100%;
       height:100%;
-      object-fit: contain;
+      object-fit: cover;
       display:none;
-      background:#fff;
     }
 
-    .roundCenterWrap{
-      display:none;
+    /* الأزرار تحت الصورة */
+    .belowRow{
+      width:min(680px, 96%);
+      margin: 10px auto 0;
+      display:flex;
+      align-items:center;
       justify-content:center;
-      margin-top: 18px;
+      gap: 14px;
     }
-    .roundBtn{
+
+    .btn{
       border:none;
       cursor:pointer;
-      border-radius: 18px;
-      padding: 10px 18px;
-      font-size: 18px;
+      border-radius: 999px;
+      padding: 12px 28px;
+      font-size: 34px;
       font-weight: 1000;
-      border: 4px solid rgba(0,0,0,.90);
-      box-shadow: 0 10px 0 rgba(0,0,0,.22);
+      color:#fff;
+      border: 6px solid rgba(0,0,0,.90);
+      box-shadow: 0 14px 0 rgba(0,0,0,.22);
       transform: translateY(0);
       transition: transform .06s ease, opacity .15s ease;
-      background: linear-gradient(180deg, var(--btnGreen), var(--btnGreen2));
-      color:#fff;
-      text-shadow: 0 3px 0 rgba(0,0,0,.28);
+      user-select:none;
       white-space:nowrap;
-      min-width: 170px;
     }
-    .roundBtn:active{transform: translateY(3px)}
-    .roundBtn:disabled{
-      opacity:.45;
+    .btn:active{transform: translateY(3px)}
+    .btn:disabled{
+      opacity:.35;
       cursor:not-allowed;
       transform: translateY(0);
     }
 
-    .bottomArea{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap: 12px;
-      margin-top: 8px;
+    .btnRound{
+      background: linear-gradient(180deg, var(--btnGreen), var(--btnGreen2));
+      min-width: 240px;
     }
 
-    .buyBtn{
-      width: min(520px, 92%);
-      border:none;
-      cursor:pointer;
-      border-radius: 22px;
-      padding: 14px 18px;
-      font-size: 34px;
-      font-weight: 1000;
-      border: 5px solid rgba(0,0,0,.90);
+    .btnBuy{
       background: linear-gradient(180deg, var(--btnYellow2), var(--btnYellow));
       color:#111;
-      box-shadow: 0 14px 0 rgba(0,0,0,.22);
-      transform: translateY(0);
-      transition: transform .06s ease;
+      text-shadow:none;
+      min-width: min(560px, 96%);
+      border-radius: 26px;
+      font-size: 34px;
     }
-    .buyBtn:active{transform: translateY(3px)}
+
+    /* زر الرئيسية: أيقونة منزل صغيرة أسفل يسار */
+    .homeBtn{
+      position:absolute;
+      left: 18px;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      border: 5px solid rgba(0,0,0,.90);
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      font-size: 30px;
+      font-weight: 1000;
+      display:none; /* يظهر للمقدم فقط */
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 12px 0 rgba(0,0,0,.22);
+      cursor:pointer;
+      user-select:none;
+    }
+    .homeBtn:active{transform: translateY(3px)}
 
     .footer{
       text-align:center;
       font-weight: 1000;
       font-size: 18px;
+      margin-top: auto;
+      padding-top: 10px;
       white-space: nowrap;
       opacity:.95;
-      margin-top: 6px;
     }
 
+    /* رسالة صغيرة مخفية (لو احتجنا) */
     .status{
       text-align:center;
-      font-weight: 1000;
-      color: var(--muted);
-      font-size: 16px;
-      min-height: 22px;
+      font-weight: 900;
+      font-size: 18px;
+      opacity:.0;       /* ✅ مخفية تماماً */
+      height: 0;        /* ✅ ما تاخذ مساحة */
+      overflow:hidden;  /* ✅ */
     }
 
-    .homeIcon{
-      position: fixed;
-      left: 14px;
-      bottom: calc(14px + env(safe-area-inset-bottom));
-      width: 54px;
-      height: 54px;
-      border-radius: 16px;
-      border: 4px solid rgba(0,0,0,.90);
-      background: rgba(255,255,255,.92);
-      box-shadow: 0 12px 0 rgba(0,0,0,.22);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      z-index: 9998;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .homeIcon:active{transform: translateY(3px)}
-    .homeIcon span{
-      font-size: 26px;
-      line-height: 1;
-      color:#111;
-      font-weight: 1000;
-    }
-
-    .overlay{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.28);
-      display:none;
-      align-items:center; justify-content:center;
-      padding: 20px;
-      z-index:9999;
-    }
-    .overlay.show{display:flex;}
-    .pill{
-      background: rgba(0,0,0,.58);
-      border: 2px solid rgba(255,255,255,.18);
-      color:#fff;
-      padding: 14px 16px;
-      border-radius: 14px;
-      font-weight: 1000;
-      text-align:center;
-      width:min(420px, 92vw);
-      box-shadow: 0 16px 40px rgba(0,0,0,.35);
-    }
-
-    @media (max-width: 520px){
-      .bigNamePill{font-size: 38px}
-      .photoBox{min-height: 430px}
-      .photoHint{font-size: 28px}
-      .buyBtn{font-size: 28px}
-      .logo{width:108px}
+    @media (max-width:420px){
+      .logo{width: 104px; top:14px; left:14px}
+      .btn{font-size: 30px}
+      .btnRound{min-width: 210px}
+      .homeBtn{width:54px;height:54px;font-size:28px}
     }
   </style>
 </head>
@@ -264,38 +229,39 @@
 
     <div class="title">لعبة تخمين الصور</div>
 
-    <div class="bigNamePill" id="myNamePill">...</div>
+    <div id="namePill" class="namePill">...</div>
 
-    <div class="photoBox" id="photoBox" title="اضغط لإضافة صورة">
-      <div class="photoHint" id="photoHint">انقر هنا لإضافة صورة</div>
-      <img id="previewImg" class="previewImg" alt="الصورة المختارة" />
-      <input id="fileInput" type="file" accept="image/*" style="display:none" />
+    <!-- صندوق الصورة -->
+    <div id="imgFrame" class="imgFrame" role="button" aria-label="إضافة صورة">
+      <div id="placeholder" class="placeholder">انقر هنا لإضافة صورة</div>
+      <img id="imgPreview" class="imgPreview" alt="الصورة المختارة" />
     </div>
 
-    <div class="roundCenterWrap" id="roundCenterWrap">
-      <button class="roundBtn" id="btnNewRound" type="button">جولة جديدة</button>
+    <!-- أزرار تحت الصورة -->
+    <div class="belowRow">
+      <button id="btnRound" class="btn btnRound" type="button" style="display:none;">جولة جديدة</button>
     </div>
 
-    <div class="status" id="statusText"></div>
-
-    <div class="bottomArea">
-      <button class="buyBtn" id="buyBtn" type="button">لشراء اللعبة اضغط هنا</button>
-      <div class="footer">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
+    <!-- زر الشراء: يظهر للاعب فقط -->
+    <div style="display:flex; justify-content:center; margin-top: 8px;">
+      <button id="btnBuy" class="btn btnBuy" type="button" style="display:none;">لشراء اللعبة اضغط هنا</button>
     </div>
+
+    <!-- (مخفية) — تم إزالة عبارة "تم اختيار الصورة (محلياً فقط)" بالكامل -->
+    <div id="status" class="status"></div>
+
+    <div class="footer">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
+
+    <button id="homeBtn" class="homeBtn" type="button" aria-label="الرئيسية">🏠</button>
   </div>
 
-  <div class="homeIcon" id="homeIcon" title="الرئيسية">
-    <span>🏠</span>
-  </div>
-
-  <div class="overlay" id="overlay">
-    <div class="pill" id="overlayText">جارٍ الاتصال…</div>
-  </div>
+  <!-- file input مخفي -->
+  <input id="fileInput" type="file" accept="image/*" style="display:none;" />
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
-      getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot,
+      getFirestore, doc, getDoc, onSnapshot, updateDoc,
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -314,239 +280,180 @@
 
     const $ = (id)=>document.getElementById(id);
 
-    function getParam(key){
+    function getParam(name){
       const u = new URL(location.href);
-      return (u.searchParams.get(key) || "").trim();
+      return (u.searchParams.get(name) || "").trim();
     }
+
     function getRoomId(){
       return getParam("r") || getParam("room") || getParam("id");
     }
-    function getRole(){
-      const r = (getParam("role") || "").toLowerCase();
-      return (r === "host") ? "host" : "player";
+
+    function sanitizeName(s){
+      return (s || "").trim().replace(/\s+/g," ").slice(0, 18);
     }
 
     const roomId = getRoomId();
-    const role = getRole();
-    const pid  = getParam("pid");
+    const role = (getParam("role") || "player").toLowerCase(); // host | player
 
-    const myNamePill = $("myNamePill");
-    const photoBox = $("photoBox");
+    const namePill = $("namePill");
+    const imgFrame = $("imgFrame");
+    const placeholder = $("placeholder");
+    const imgPreview = $("imgPreview");
     const fileInput = $("fileInput");
-    const previewImg = $("previewImg");
-    const photoHint = $("photoHint");
-    const statusText = $("statusText");
+    const btnRound = $("btnRound");
+    const btnBuy = $("btnBuy");
+    const homeBtn = $("homeBtn");
 
-    const buyBtn = $("buyBtn");
-    const roundCenterWrap = $("roundCenterWrap");
-    const btnNewRound = $("btnNewRound");
-    const homeIcon = $("homeIcon");
+    // ✅ إظهار/إخفاء حسب الدور
+    const isHost = role === "host";
+    btnRound.style.display = isHost ? "inline-block" : "none";
+    homeBtn.style.display = isHost ? "flex" : "none";
+    btnBuy.style.display = isHost ? "none" : "inline-block";
 
-    // ✅ قفل/فتح إضافة الصورة
-    let imageLocked = false;
-    function lockImage(){
-      imageLocked = true;
-      photoBox.classList.add("locked");
-      photoBox.title = "";
-    }
-    function unlockImage(){
-      imageLocked = false;
-      photoBox.classList.remove("locked");
-      photoBox.title = "اضغط لإضافة صورة";
-    }
-
-    function showOverlay(msg){
-      $("overlayText").textContent = msg || "جارٍ الاتصال…";
-      $("overlay").classList.add("show");
-    }
-    function hideOverlay(){
-      $("overlay").classList.remove("show");
-    }
-
-    buyBtn.addEventListener("click", () => {
+    // شراء اللعبة للاعب فقط
+    btnBuy.addEventListener("click", ()=>{
       window.open("https://sandooq-m.com", "_blank", "noopener,noreferrer");
     });
 
-    if(role === "host"){
-      roundCenterWrap.style.display = "flex";
-      homeIcon.style.display = "flex";
-      buyBtn.style.display = "none";
+    if(!roomId){
+      namePill.textContent = "الرابط ناقص";
+      imgFrame.style.pointerEvents = "none";
+      if(isHost){ btnRound.disabled = true; }
     }
+
+    const roomRef = doc(db, "khamnRooms", roomId);
+
+    // ====== حالة الصورة المحلية (لا تُرفع نهائياً) ======
+    let localUrl = "";
+    let imageLocked = false;
+    let currentRoundId = "";
 
     function clearLocalImage(){
-      previewImg.src = "";
-      previewImg.style.display = "none";
-      photoHint.style.display = "block";
+      if(localUrl){
+        try{ URL.revokeObjectURL(localUrl); }catch(e){}
+      }
+      localUrl = "";
+      imageLocked = false;
+      imgFrame.classList.remove("locked");
+      placeholder.style.display = "block";
+      imgPreview.style.display = "none";
+      imgPreview.src = "";
       fileInput.value = "";
-      statusText.textContent = "";
-      // ✅ مع بداية جولة جديدة: نفتح الإضافة مرة ثانية
-      unlockImage();
     }
 
-    photoBox.addEventListener("click", () => {
-      if(imageLocked) return;        // ✅ ممنوع تغيير الصورة بعد الاختيار
+    function lockImage(){
+      imageLocked = true;
+      imgFrame.classList.add("locked");
+    }
+
+    // اختيار الصورة: مرة واحدة فقط لكل جولة
+    imgFrame.addEventListener("click", ()=>{
+      if(!roomId) return;
+      if(imageLocked) return; // ✅ ممنوع تغيير الصورة قبل جولة جديدة
       fileInput.click();
     });
 
-    fileInput.addEventListener("change", () => {
+    fileInput.addEventListener("change", (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
       if(imageLocked) return;
 
-      const f = fileInput.files && fileInput.files[0];
-      if(!f) return;
+      const url = URL.createObjectURL(file);
+      localUrl = url;
+      imgPreview.src = url;
+      imgPreview.style.display = "block";
+      placeholder.style.display = "none";
+      lockImage();
 
-      if(!f.type.startsWith("image/")){
-        statusText.textContent = "⚠️ اختر صورة فقط";
+      // ✅ لا يوجد أي نص "تم اختيار الصورة..." — تم حذفه كما طلبت
+    });
+
+    // ====== Firebase Listen ======
+    let unsub = null;
+
+    async function boot(){
+      if(!roomId) return;
+
+      // تأكد الغرفة موجودة
+      const snap = await getDoc(roomRef);
+      if(!snap.exists()){
+        namePill.textContent = "الغرفة غير موجودة";
+        imgFrame.style.pointerEvents = "none";
+        if(isHost) btnRound.disabled = true;
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        previewImg.src = String(reader.result || "");
-        previewImg.style.display = "block";
-        photoHint.style.display = "none";
-        statusText.textContent = "✅ تم اختيار الصورة (محلياً فقط)";
-        // ✅ بعد أول اختيار: نقفل الإضافة
-        lockImage();
-      };
-      reader.readAsDataURL(f);
-    });
-
-    if(!roomId){
-      statusText.textContent = "⚠️ الرابط ناقص (ما فيه رقم غرفة).";
-      photoBox.style.pointerEvents = "none";
-      photoBox.style.opacity = ".6";
-      if(role === "host"){
-        btnNewRound.disabled = true;
-      }
-    }
-
-    const roomRef = roomId ? doc(db, "khamnRooms", roomId) : null;
-
-    let unsub = null;
-    let currentRoundId = null;
-
-    function pickPlayerName(data){
-      const arr = Array.isArray(data?.playersArr) ? data.playersArr : [];
-      if(pid && arr.length){
-        const me = arr.find(x => x && x.id === pid && (x.name || "").trim());
-        if(me) return String(me.name).trim();
-      }
-      if((data?.player2Name || "").trim()) return String(data.player2Name).trim();
-
-      const host = String(data?.hostName || "").trim();
-      const last = [...arr].reverse().find(x => x && (x.name || "").trim() && String(x.name).trim() !== host);
-      if(last) return String(last.name).trim();
-
-      return "اللاعب";
-    }
-
-    function renderMyName(data){
-      const host = String(data?.hostName || "").trim() || "المقدم";
-      const player = pickPlayerName(data);
-      myNamePill.textContent = (role === "host") ? host : player;
-    }
-
-    async function ensureRoomDoc(){
-      if(!roomRef) return false;
-
-      const snap = await getDoc(roomRef);
-      if(!snap.exists()){
-        await setDoc(roomRef, {
-          roomId,
-          createdAt: serverTimestamp(),
-          hostName: "",
-          player2Name: "",
-          status: "lobby",
-          gameStarted: false,
-          startedAt: null,
-          roundId: String(Date.now())
-        }, { merge:true });
-      }
-      return true;
-    }
-
-    function listenRoom(){
       unsub?.();
-      unsub = onSnapshot(roomRef, (snap) => {
-        if(!snap.exists()){
-          statusText.textContent = "⚠️ الغرفة غير موجودة.";
+      unsub = onSnapshot(roomRef, (s)=>{
+        if(!s.exists()) return;
+        const d = s.data() || {};
+
+        // الاسم المعروض (نفس كبسولة الاسم)
+        const hostName = sanitizeName(d.hostName || "");
+        const p2Name = sanitizeName(d.player2Name || "");
+
+        namePill.textContent = isHost ? (hostName || "المقدم") : (p2Name || "اللاعب");
+
+        // إنهاء اللعبة/رجوع للوبي
+        const stillGame = (d.status === "game" || d.phase === "game" || d.gameStarted === true);
+        if(!stillGame){
+          // اقفل التفاعل
+          imgFrame.style.pointerEvents = "none";
+          if(isHost) btnRound.disabled = true;
           return;
+        }else{
+          imgFrame.style.pointerEvents = "";
+          if(isHost) btnRound.disabled = false;
         }
 
-        const data = snap.data() || {};
-        renderMyName(data);
-
-        const rid = String(data.roundId || "");
-        if(rid && currentRoundId !== rid){
+        // جولة جديدة = تغيير roundId
+        const rid = String(d.roundId || "");
+        if(rid && rid !== currentRoundId){
           currentRoundId = rid;
-          clearLocalImage();
-          statusText.textContent = "🔄 جولة جديدة بدأت";
-          setTimeout(()=>{ if(statusText.textContent.includes("جولة جديدة")) statusText.textContent=""; }, 1200);
+          clearLocalImage(); // ✅ يمسح الصور عند الطرفين محلياً
         }
       });
     }
 
-    btnNewRound?.addEventListener("click", async () => {
-      if(role !== "host" || !roomRef) return;
-      showOverlay("جارٍ بدء جولة جديدة…");
+    // زر جولة جديدة (مقدم فقط)
+    btnRound.addEventListener("click", async ()=>{
+      if(!isHost || !roomId) return;
+      btnRound.disabled = true;
       try{
         await updateDoc(roomRef, {
+          status: "game",
+          gameStarted: true,
           roundId: String(Date.now()),
-          roundStartedAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         });
-      }catch(e){
-        await setDoc(roomRef, {
-          roundId: String(Date.now()),
-          roundStartedAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        }, { merge:true });
-      }
-      hideOverlay();
+      }catch(e){}
+      setTimeout(()=> btnRound.disabled = false, 400);
     });
 
-    homeIcon?.addEventListener("click", async () => {
-      if(role !== "host") return;
-
-      showOverlay("جارٍ إنهاء الجلسة…");
-
+    // زر الرئيسية (مقدم فقط): يمسح بيانات الجولات + يرجع للصفحة الرئيسية
+    homeBtn.addEventListener("click", async ()=>{
+      if(!isHost || !roomId) return;
       try{
-        if(roomRef){
-          await setDoc(roomRef, {
-            player2Name: "",
-            playersArr: [],
-            readyIds: [],
-            status: "lobby",
-            gameStarted: false,
-            startedAt: null,
-            roundId: String(Date.now()),
-            updatedAt: serverTimestamp()
-          }, { merge:true });
-        }
+        await updateDoc(roomRef, {
+          status: "lobby",
+          gameStarted: false,
+          player2Name: "",
+          roundId: String(Date.now()),
+          updatedAt: serverTimestamp()
+        });
       }catch(e){}
-
       try{ sessionStorage.removeItem("khamn_roomId"); }catch(e){}
-
-      // ✅ فتح الإضافة طبيعي لو رجع
-      unlockImage();
-
-      hideOverlay();
       location.href = "index.html";
     });
 
-    (async () => {
-      if(!roomRef) return;
-      showOverlay("جارٍ الاتصال…");
-      await ensureRoomDoc();
-      listenRoom();
-      hideOverlay();
-    })();
-
-    window.addEventListener("beforeunload", () => {
+    window.addEventListener("beforeunload", ()=>{
       unsub?.();
     });
+
+    boot();
   </script>
 </body>
 </html>
 
-<!-- اسم النسخة: game.html (تخمين الصور) – إصدار 3 -->
+<!-- اسم النسخة: game.html (تخمين الصور) – إصدار 2 -->
