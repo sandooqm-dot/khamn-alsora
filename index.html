@@ -182,12 +182,13 @@
       margin-top: 34px;
     }
 
+    /* ✅ التعديل الوحيد هنا: تصغير + كبسولة */
     .btnStart{
       border:none;
       cursor:pointer;
-      border-radius: 26px;
-      padding: 14px 54px;
-      font-size: 54px;
+      border-radius: 999px;              /* كبسولة */
+      padding: 10px 44px;                /* أصغر */
+      font-size: 46px;                   /* أصغر */
       font-weight: 1000;
       color:#fff;
       border: 6px solid rgba(0,0,0,.90);
@@ -195,7 +196,7 @@
       box-shadow: 0 14px 0 rgba(0,0,0,.22);
       transform: translateY(0);
       transition: transform .06s ease, opacity .15s ease;
-      min-width: 300px;
+      min-width: 260px;                  /* أصغر */
     }
     .btnStart:active{transform: translateY(3px)}
     .btnStart:disabled{
@@ -551,4 +552,4 @@
 </body>
 </html>
 
-<!-- اسم النسخة: index.html (تخمين الصور) – إصدار 5 -->
+<!-- اسم النسخة: index.html (تخمين الصور) – إصدار 6 -->
