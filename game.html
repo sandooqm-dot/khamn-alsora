@@ -35,7 +35,6 @@
       color:var(--white);
     }
 
-    /* الكرت الخارجي الكبير */
     .outer{
       width:min(720px, 96vw);
       min-height: min(980px, 92vh);
@@ -49,7 +48,6 @@
       gap: 14px;
     }
 
-    /* ✅ اللوجو: أعلى اليسار + أكبر */
     .logo{
       position:absolute;
       top: 16px;
@@ -62,12 +60,11 @@
       z-index: 5;
     }
 
-    /* العنوان */
     .title{
       text-align:center;
       font-size: clamp(40px, 7.5vw, 64px);
       font-weight: 1000;
-      margin: 96px 0 6px; /* ينزل تحت اللوجو */
+      margin: 96px 0 6px;
       color:#fff;
       text-shadow:
         -2px -2px 0 rgba(0,0,0,.35),
@@ -78,7 +75,6 @@
       white-space:nowrap;
     }
 
-    /* كبسولة اسم اللاعب الحالي */
     .bigNamePill{
       margin: 6px auto 8px;
       width: min(520px, 92%);
@@ -94,7 +90,6 @@
       text-shadow: 0 4px 0 rgba(0,0,0,.22);
     }
 
-    /* صندوق الصورة */
     .photoBox{
       width: min(650px, 96%);
       margin: 0 auto;
@@ -109,6 +104,12 @@
       box-shadow: 0 24px 40px rgba(0,0,0,.20);
       cursor:pointer;
     }
+    /* ✅ لما تنقفل الصورة: يصير شكلها غير قابل للنقر */
+    .photoBox.locked{
+      cursor: default;
+      opacity: .98;
+    }
+
     .photoHint{
       position:absolute;
       inset:auto 14px auto 14px;
@@ -120,6 +121,7 @@
       user-select:none;
       pointer-events:none;
     }
+
     .previewImg{
       width:100%;
       height:100%;
@@ -128,9 +130,8 @@
       background:#fff;
     }
 
-    /* ✅ زر جولة جديدة: بالمنتصف أسفل الصورة + مسافة */
     .roundCenterWrap{
-      display:none; /* يظهر للمقدم فقط */
+      display:none;
       justify-content:center;
       margin-top: 18px;
     }
@@ -158,7 +159,6 @@
       transform: translateY(0);
     }
 
-    /* أزرار أسفل */
     .bottomArea{
       display:flex;
       flex-direction:column;
@@ -193,7 +193,6 @@
       margin-top: 6px;
     }
 
-    /* رسالة حالة صغيرة */
     .status{
       text-align:center;
       font-weight: 1000;
@@ -202,7 +201,6 @@
       min-height: 22px;
     }
 
-    /* ✅ زر الرئيسية: أيقونة منزل صغيرة أسفل يسار */
     .homeIcon{
       position: fixed;
       left: 14px;
@@ -213,7 +211,7 @@
       border: 4px solid rgba(0,0,0,.90);
       background: rgba(255,255,255,.92);
       box-shadow: 0 12px 0 rgba(0,0,0,.22);
-      display:none; /* يظهر للمقدم فقط */
+      display:none;
       align-items:center;
       justify-content:center;
       cursor:pointer;
@@ -229,7 +227,6 @@
       font-weight: 1000;
     }
 
-    /* شاشة خفيفة */
     .overlay{
       position:fixed; inset:0;
       background: rgba(0,0,0,.28);
@@ -267,7 +264,6 @@
 
     <div class="title">لعبة تخمين الصور</div>
 
-    <!-- ✅ باقي بس كبسولة الاسم -->
     <div class="bigNamePill" id="myNamePill">...</div>
 
     <div class="photoBox" id="photoBox" title="اضغط لإضافة صورة">
@@ -276,7 +272,6 @@
       <input id="fileInput" type="file" accept="image/*" style="display:none" />
     </div>
 
-    <!-- ✅ زر جولة جديدة بالمنتصف أسفل الصورة -->
     <div class="roundCenterWrap" id="roundCenterWrap">
       <button class="roundBtn" id="btnNewRound" type="button">جولة جديدة</button>
     </div>
@@ -289,7 +284,6 @@
     </div>
   </div>
 
-  <!-- ✅ الرئيسية أسفل يسار للمقدم فقط -->
   <div class="homeIcon" id="homeIcon" title="الرئيسية">
     <span>🏠</span>
   </div>
@@ -299,7 +293,6 @@
   </div>
 
   <script type="module">
-    // ========= Firebase =========
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
       getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot,
@@ -349,6 +342,19 @@
     const btnNewRound = $("btnNewRound");
     const homeIcon = $("homeIcon");
 
+    // ✅ قفل/فتح إضافة الصورة
+    let imageLocked = false;
+    function lockImage(){
+      imageLocked = true;
+      photoBox.classList.add("locked");
+      photoBox.title = "";
+    }
+    function unlockImage(){
+      imageLocked = false;
+      photoBox.classList.remove("locked");
+      photoBox.title = "اضغط لإضافة صورة";
+    }
+
     function showOverlay(msg){
       $("overlayText").textContent = msg || "جارٍ الاتصال…";
       $("overlay").classList.add("show");
@@ -357,33 +363,34 @@
       $("overlay").classList.remove("show");
     }
 
-    // شراء اللعبة
     buyBtn.addEventListener("click", () => {
       window.open("https://sandooq-m.com", "_blank", "noopener,noreferrer");
     });
 
-    // ✅ للمقدم فقط: إظهار زر جولة جديدة + زر الرئيسية
     if(role === "host"){
       roundCenterWrap.style.display = "flex";
       homeIcon.style.display = "flex";
-      // ✅ حذف زر الشراء من صفحة المقدم
       buyBtn.style.display = "none";
     }
 
-    // رفع صورة محلي فقط
     function clearLocalImage(){
       previewImg.src = "";
       previewImg.style.display = "none";
       photoHint.style.display = "block";
       fileInput.value = "";
       statusText.textContent = "";
+      // ✅ مع بداية جولة جديدة: نفتح الإضافة مرة ثانية
+      unlockImage();
     }
 
     photoBox.addEventListener("click", () => {
+      if(imageLocked) return;        // ✅ ممنوع تغيير الصورة بعد الاختيار
       fileInput.click();
     });
 
     fileInput.addEventListener("change", () => {
+      if(imageLocked) return;
+
       const f = fileInput.files && fileInput.files[0];
       if(!f) return;
 
@@ -398,11 +405,12 @@
         previewImg.style.display = "block";
         photoHint.style.display = "none";
         statusText.textContent = "✅ تم اختيار الصورة (محلياً فقط)";
+        // ✅ بعد أول اختيار: نقفل الإضافة
+        lockImage();
       };
       reader.readAsDataURL(f);
     });
 
-    // لو الرابط ناقص
     if(!roomId){
       statusText.textContent = "⚠️ الرابط ناقص (ما فيه رقم غرفة).";
       photoBox.style.pointerEvents = "none";
@@ -468,7 +476,6 @@
         const data = snap.data() || {};
         renderMyName(data);
 
-        // مزامنة “جولة جديدة” فقط
         const rid = String(data.roundId || "");
         if(rid && currentRoundId !== rid){
           currentRoundId = rid;
@@ -479,7 +486,6 @@
       });
     }
 
-    // ✅ زر جولة جديدة (للمقدم فقط)
     btnNewRound?.addEventListener("click", async () => {
       if(role !== "host" || !roomRef) return;
       showOverlay("جارٍ بدء جولة جديدة…");
@@ -499,7 +505,6 @@
       hideOverlay();
     });
 
-    // ✅ زر الرئيسية: يمسح بيانات اللاعب/الجولة ثم يرجّع للصفحة الرئيسية (للمقدم فقط)
     homeIcon?.addEventListener("click", async () => {
       if(role !== "host") return;
 
@@ -518,18 +523,17 @@
             updatedAt: serverTimestamp()
           }, { merge:true });
         }
-      }catch(e){
-        // نتجاهل أي خطأ بسيط
-      }
+      }catch(e){}
 
-      // يمسح روم المقدم محلياً عشان يبدأ من جديد
       try{ sessionStorage.removeItem("khamn_roomId"); }catch(e){}
+
+      // ✅ فتح الإضافة طبيعي لو رجع
+      unlockImage();
 
       hideOverlay();
       location.href = "index.html";
     });
 
-    // تشغيل
     (async () => {
       if(!roomRef) return;
       showOverlay("جارٍ الاتصال…");
@@ -545,4 +549,4 @@
 </body>
 </html>
 
-<!-- اسم النسخة: game.html (تخمين الصور) – إصدار 2 -->
+<!-- اسم النسخة: game.html (تخمين الصور) – إصدار 3 -->
