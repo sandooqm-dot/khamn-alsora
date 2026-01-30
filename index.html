@@ -63,12 +63,12 @@
       pointer-events:none;
     }
 
-    /* ✅ تعديلك الجديد: رفع اللوجو أكثر + تصغيره قليل */
+    /* ✅ تعديلك: رفع اللوجو أكثر + تصغيره قليل */
     .logo{
       position:absolute;
-      top:-30px;     /* كان -22px */
+      top:-30px;
       left:8px;
-      width:150px;   /* كان 165px */
+      width:150px;
       height:auto;
       pointer-events:none;
       user-select:none;
@@ -212,12 +212,14 @@
       transform: translateY(0);
     }
 
+    /* ✅ تعديلك الجديد: تصغير الحقوق + سطر واحد + تحت المربع */
     .footer{
       text-align:center;
       font-weight:900;
-      font-size: 20px;
+      font-size: 15px;     /* كان 20px */
       opacity:.9;
-      margin-top: 10px;
+      margin-top: 14px;    /* كان 10px */
+      white-space: nowrap; /* يخليها على خط مستقيم */
     }
 
     .modalOverlay{
@@ -558,4 +560,4 @@
 </body>
 </html>
 
-<!-- اسم النسخة: index.html (تخمين الصور) – إصدار 3 -->
+<!-- اسم النسخة: index.html (تخمين الصور) – إصدار 4 -->
