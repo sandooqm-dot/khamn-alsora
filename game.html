@@ -194,14 +194,18 @@
     }
     .homeBtn:active{transform: translateY(3px)}
 
+    /* ✅ الحقوق: أصغر + أسفل يمين (مقابل زر المنزل) */
     .footer{
-      text-align:center;
+      position:absolute;
+      right: 18px;
+      left: auto;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      text-align:right;
       font-weight: 1000;
-      font-size: 18px;
-      margin-top: auto;
-      padding-top: 10px;
+      font-size: 14px;   /* أصغر */
       white-space: nowrap;
       opacity:.95;
+      pointer-events:none;
     }
 
     /* رسالة صغيرة مخفية (لو احتجنا) */
@@ -219,6 +223,7 @@
       .btn{font-size: 30px}
       .btnRound{min-width: 210px}
       .homeBtn{width:54px;height:54px;font-size:28px}
+      .footer{font-size: 12.5px; right: 14px;}
     }
   </style>
 </head>
@@ -247,7 +252,7 @@
       <button id="btnBuy" class="btn btnBuy" type="button" style="display:none;">لشراء اللعبة اضغط هنا</button>
     </div>
 
-    <!-- (مخفية) — تم إزالة عبارة "تم اختيار الصورة (محلياً فقط)" بالكامل -->
+    <!-- (مخفية) -->
     <div id="status" class="status"></div>
 
     <div class="footer">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
@@ -365,8 +370,6 @@
       imgPreview.style.display = "block";
       placeholder.style.display = "none";
       lockImage();
-
-      // ✅ لا يوجد أي نص "تم اختيار الصورة..." — تم حذفه كما طلبت
     });
 
     // ====== Firebase Listen ======
@@ -456,4 +459,4 @@
 </body>
 </html>
 
-<!-- اسم النسخة: game.html (تخمين الصور) – إصدار 2 -->
+<!-- اسم النسخة: game.html (تخمين الصور) – إصدار 3 -->
