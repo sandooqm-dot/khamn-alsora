@@ -12,6 +12,8 @@
       --card:#ffffff;
       --yellow:#f4c400;
       --text:#111;
+      --muted:#6b6b6b;
+      --stroke:#000;
       --shadow: 0 18px 50px rgba(0,0,0,.28);
     }
 
@@ -175,6 +177,12 @@
       width:min(420px, 92vw);
       box-shadow: 0 16px 40px rgba(0,0,0,.35);
     }
+
+    @media (max-width:420px){
+      .logo{width: 110px;}
+      .input{height:60px; font-size:20px}
+      .btn{font-size:22px}
+    }
   </style>
 </head>
 
@@ -186,7 +194,7 @@
 
     <div class="card">
       <div class="label">أدخل كود التفعيل</div>
-      <input id="codeInput" class="input" placeholder="مثال: SNDQ-ABCD-1234-EF56" autocomplete="off" inputmode="latin" />
+      <input id="codeInput" class="input" placeholder="مثال: ABCD-1234" autocomplete="off" inputmode="latin" />
 
       <button id="btnActivate" class="btn btnActivate" type="button" disabled>تفعيل</button>
       <button id="btnBuy" class="btn btnBuy" type="button">لشراء اللعبة اضغط هنا</button>
@@ -207,13 +215,16 @@
   </div>
 
   <script>
+    // =========================
+    // إعدادات التفعيل
+    // =========================
     const GAME_KEY = "khamn";
     const STORAGE_OK = "khamn_activated";
     const STORAGE_CODE = "khamn_code";
     const STORAGE_DEVICE = "khamn_deviceId";
 
-    // ✅ رابطك الحالي
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6_CHz-E7STSB6fKpj4CHlM-Kqnt0Kn1E2tA9_7MLFkIeQHPwsFIRy76Qg5qIK1AV0pA/exec";
+    // ✅ رابط Apps Script /exec (تم تركيبه)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwlWNNceDPOcOTwwsDJTTca7qIu-5tDSKtOsMUAXvfANa7uW4YW40fFAp5gAkuTuAU_DQ/exec";
 
     const $ = (id)=>document.getElementById(id);
 
@@ -230,7 +241,7 @@
         .trim()
         .replace(/\s+/g,"")
         .replace(/[^\w\-]/g,"")
-        .slice(0, 60)
+        .slice(0, 40)
         .toUpperCase();
     }
 
@@ -247,7 +258,6 @@
       location.replace("index.html");
     }
 
-    // ✅ دخول تلقائي إذا متفعل
     (function autoPass(){
       try{
         const ok = localStorage.getItem(STORAGE_OK) === "1";
@@ -276,55 +286,27 @@
       setMsg("", "");
     });
 
-    // ---------- JSONP ----------
-    function jsonp(url){
-      return new Promise((resolve, reject)=>{
-        const cb = "cb_" + Date.now() + "_" + Math.random().toString(16).slice(2);
-        const script = document.createElement("script");
-        const timeout = setTimeout(()=>{
-          cleanup();
-          reject(new Error("timeout"));
-        }, 12000);
-
-        function cleanup(){
-          clearTimeout(timeout);
-          try{ delete window[cb]; }catch(e){ window[cb] = undefined; }
-          if(script && script.parentNode) script.parentNode.removeChild(script);
-        }
-
-        window[cb] = (data)=>{
-          cleanup();
-          resolve(data);
-        };
-
-        script.onerror = ()=>{
-          cleanup();
-          reject(new Error("load_error"));
-        };
-
-        const sep = url.includes("?") ? "&" : "?";
-        script.src = url + sep + "callback=" + encodeURIComponent(cb);
-        document.body.appendChild(script);
-      });
-    }
-
     async function verifyCode(){
       const code = cleanCode(codeInput.value);
       if(code.length < 4) return;
 
       const deviceId = getDeviceId();
+
       btnActivate.disabled = true;
       showOverlay("جارٍ التحقق من الكود…");
 
       try{
-        const url =
-          SCRIPT_URL +
-          "?action=verify" +
-          "&game=" + encodeURIComponent(GAME_KEY) +
-          "&code=" + encodeURIComponent(code) +
-          "&deviceId=" + encodeURIComponent(deviceId);
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type":"application/json" },
+          body: JSON.stringify({ game: GAME_KEY, code, deviceId })
+        });
 
-        const data = await jsonp(url);
+        const data = await res.json().catch(()=> ({}));
+
+        if(!res.ok){
+          throw new Error(data && data.error ? data.error : "فشل الاتصال");
+        }
 
         if(data && data.ok === true){
           localStorage.setItem(STORAGE_OK, "1");
@@ -338,18 +320,9 @@
         }
 
         const err = (data && (data.error || data.message)) || "الكود غير صحيح أو مستخدم";
-        let msgAr = err;
-
-        // رسائل أوضح
-        if(err === "code_not_found") msgAr = "الكود غير موجود";
-        if(err === "code_used_on_other_device") msgAr = "الكود مستخدم على جهاز آخر";
-        if(err === "code_required") msgAr = "اكتب كود صحيح";
-        if(err === "device_required") msgAr = "تعذر قراءة الجهاز";
-
-        setMsg("❌ " + msgAr, "err");
-
+        setMsg("❌ " + err, "err");
       }catch(e){
-        setMsg("❌ تعذر التحقق الآن. تأكد من الإنترنت أو أن نشر السكربت (Anyone) صحيح.", "err");
+        setMsg("❌ تعذر التحقق الآن. تأكد من الإنترنت أو رابط السكربت.", "err");
       }finally{
         hideOverlay();
         btnActivate.disabled = !(cleanCode(codeInput.value).length >= 4);
