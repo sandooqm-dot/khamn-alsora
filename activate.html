@@ -2,327 +2,245 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
-  <title>تفعيل لعبة تخمين الصور</title>
-
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>تفعيل اللعبة</title>
   <style>
     :root{
-      --bg1:#123a7a;
-      --bg2:#1f4fa3;
+      --bg:#0f3f9b;
       --card:rgba(255,255,255,.10);
-      --frame:rgba(255,255,255,.18);
+      --card2:rgba(255,255,255,.14);
       --white:#fff;
-      --black:#0b0b0b;
-      --gold:#f4c400;
-      --gold2:#ffd64a;
-      --danger:#ff5b5b;
-      --ok:#21c55d;
+      --black:#111;
+      --yellow1:#ffd54a;
+      --yellow2:#f4c400;
+      --danger:#ff4d4d;
+      --ok:#2ecc71;
     }
     *{box-sizing:border-box}
     body{
-      margin:0;
-      min-height:100vh;
-      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
-      background: radial-gradient(1200px 700px at 50% 25%, #2a63c8 0%, var(--bg2) 45%, var(--bg1) 100%);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px 14px;
+      margin:0; min-height:100vh;
+      background: radial-gradient(circle at 50% 30%, #1b63d4 0%, var(--bg) 60%, #0a2d72 100%);
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       color:var(--white);
+      display:flex; align-items:center; justify-content:center;
+      padding:24px;
     }
     .wrap{
       width:min(520px, 94vw);
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.16);
-      border-radius:22px;
-      padding:22px 16px 16px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.25);
-      position:relative;
-      overflow:hidden;
-    }
-    .inner{
-      background: rgba(255,255,255,.14);
+      background: linear-gradient(180deg, var(--card2), var(--card));
       border:1px solid rgba(255,255,255,.18);
-      border-radius:20px;
-      padding:18px 14px 16px;
-      text-align:center;
+      border-radius:22px;
+      padding:22px 18px 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      position:relative;
     }
     .logo{
-      width:64px;height:64px; object-fit:contain;
-      margin:4px auto 10px;
-      display:block;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
-      pointer-events:none;
-      user-select:none;
+      width:84px;height:84px; object-fit:contain;
+      display:block; margin:0 auto 10px;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,.25));
     }
     h1{
-      margin:0 0 16px;
+      margin:8px 0 14px;
+      text-align:center;
       font-size:34px;
-      line-height:1.2;
-      font-weight:900;
-      text-shadow: 0 10px 24px rgba(0,0,0,.25);
+      letter-spacing:.2px;
     }
-    .card{
-      margin:0 auto;
-      width:min(420px, 94%);
-      background:#f2f2f2;
-      border:4px solid #0f0f0f;
-      border-radius:16px;
-      padding:14px 12px 14px;
-      box-shadow: inset 0 0 0 2px rgba(0,0,0,.12), 0 12px 30px rgba(0,0,0,.20);
-      color:var(--black);
+    .box{
+      background:#fff;
+      border-radius:18px;
+      padding:16px;
+      border:4px solid rgba(0,0,0,.75);
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+      color:#111;
     }
     .label{
-      font-size:18px;
+      text-align:center;
       font-weight:800;
-      margin:0 0 10px;
+      font-size:20px;
+      margin-bottom:10px;
     }
     input{
       width:100%;
-      height:54px;
-      border-radius:14px;
-      border:3px solid #1b1b1b;
-      outline:none;
-      font-size:22px;
-      font-weight:900;
+      padding:14px 14px;
+      font-size:20px;
+      font-weight:800;
       text-align:center;
       letter-spacing:1px;
-      padding:0 12px;
-      background:#fff;
+      border-radius:14px;
+      border:3px solid rgba(0,0,0,.35);
+      outline:none;
     }
+    input::placeholder{letter-spacing:1px}
     .btn{
       width:100%;
-      height:58px;
-      border-radius:14px;
-      border:3px solid #1b1b1b;
-      background: linear-gradient(180deg, var(--gold2), var(--gold));
-      font-size:26px;
-      font-weight:900;
       margin-top:12px;
-      cursor:pointer;
-      box-shadow: 0 10px 0 rgba(0,0,0,.22);
-      color:#1565c0;
-    }
-    .btn:disabled{
-      opacity:.65;
-      cursor:not-allowed;
-      filter:saturate(.7);
-    }
-    .msg{
-      margin-top:14px;
-      min-height:52px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border-radius:12px;
-      font-weight:900;
-      padding:10px 12px;
-      background:#fff;
-      border:0;
-      color:#111;
-    }
-    .msg.ok{ background: #eafff2; color:#0f7a37; border:2px solid rgba(33,197,93,.35); }
-    .msg.bad{ background: #fff1f1; color:#b00020; border:2px solid rgba(255,91,91,.35); }
-
-    .overlay{
-      position:absolute; inset:0;
-      background: rgba(0,0,0,.25);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-    }
-    .overlay.show{ display:flex; }
-    .toast{
-      background:#fff;
-      color:#111;
+      padding:14px 14px;
       border-radius:14px;
-      padding:12px 14px;
+      border:3px solid rgba(0,0,0,.55);
+      background: linear-gradient(180deg, var(--yellow1), var(--yellow2));
+      font-size:24px;
       font-weight:900;
-      box-shadow: 0 14px 35px rgba(0,0,0,.25);
+      color:#0b2f74;
+      cursor:pointer;
+      box-shadow: 0 10px 18px rgba(0,0,0,.20);
     }
-
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+    .msg{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius:12px;
+      font-weight:800;
+      text-align:center;
+      display:none;
+      border:2px solid rgba(0,0,0,.15);
+    }
+    .msg.err{display:block; background:#ffe7e7; color:#b30000}
+    .msg.ok{display:block; background:#e9fff1; color:#0c7a2a}
+    .msg.wait{display:block; background:#fff7d9; color:#7a5b00}
     .footer{
       margin-top:14px;
-      font-size:14px;
-      opacity:.85;
-      color:#e9f1ff;
       text-align:center;
+      font-size:13px;
+      opacity:.9;
+      color:rgba(255,255,255,.9);
     }
   </style>
 </head>
-
 <body>
   <div class="wrap">
-    <div class="inner">
-      <!-- ✅ اللوقو (أنت تقول محلوله، خليته موجود) -->
-      <img class="logo" src="logo.png" alt="صندوق المسابقات" />
+    <!-- ✅ اكتب الاسم كما هو عندك بالضبط -->
+    <img class="logo" src="logo.PNG" alt="صندوق المسابقات">
 
-      <h1>تفعيل لعبة تخمين الصور</h1>
+    <h1>تفعيل اللعبة</h1>
 
-      <div class="card">
-        <div class="label">أدخل كود التفعيل</div>
-        <input id="code" placeholder="SNDQ-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters" />
-        <button id="btn" class="btn">تفعيل</button>
+    <div class="box">
+      <div class="label">أدخل كود التفعيل</div>
+      <input id="code" autocomplete="off" inputmode="latin" placeholder="SNDQ-XXXX-XXXX-XXXX" />
+      <button id="btn" class="btn">تفعيل</button>
 
-        <div id="msg" class="msg bad" style="opacity:.65">
-          أدخل الكود ثم اضغط تفعيل
-        </div>
-      </div>
-
-      <div class="footer">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
+      <div id="m" class="msg"></div>
     </div>
 
-    <div id="overlay" class="overlay">
-      <div class="toast">جاري التحقق من الكود…</div>
-    </div>
+    <div class="footer">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
   </div>
 
-  <script>
-    /**************
-     * عدّل هذا السطر فقط:
-     **************/
-    const SCRIPT_URL = "PUT_YOUR_EXEC_URL_HERE"; // مثال: https://script.google.com/macros/s/XXXX/exec
+<script>
+  // ✅ رابط /exec الجديد اللي عطيتني
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyL--KkyP4HSjaArHWxG5nJQ4fe5ANCL2rTUJZIKWR5ZzyClJUNaTVa2O1kkgNfB2doqg/exec";
 
-    // وين يروح بعد التفعيل؟ (غيّرها إذا تبغى)
-    const NEXT_URL = "index.html";
+  // ✅ بعد التفعيل يروح هنا
+  const NEXT_PAGE = "index.html";
 
-    const elCode = document.getElementById("code");
-    const elBtn  = document.getElementById("btn");
-    const elMsg  = document.getElementById("msg");
-    const overlay= document.getElementById("overlay");
+  const LS_OK = "SNDQ_ACTIVATED_OK";
+  const LS_DV = "SNDQ_DEVICE_KEY";
 
-    let busy = false;
-    let timeoutId = null;
-    let lastScriptTag = null;
+  const $ = (id)=>document.getElementById(id);
+  const codeEl = $("code");
+  const btn = $("btn");
+  const msg = $("m");
 
-    function setMsg(text, ok){
-      elMsg.textContent = text;
-      elMsg.className = "msg " + (ok ? "ok" : "bad");
-      elMsg.style.opacity = "1";
-    }
+  function show(type, text){
+    msg.className = "msg " + type;
+    msg.textContent = text;
+  }
 
-    function showLoading(on){
-      overlay.classList.toggle("show", !!on);
-      elBtn.disabled = !!on;
-      busy = !!on;
-    }
+  function getDeviceKey(){
+    let k = localStorage.getItem(LS_DV);
+    if (k) return k;
+    // uuid بسيط
+    k = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+    localStorage.setItem(LS_DV, k);
+    return k;
+  }
 
-    function normalizeCode(v){
-      return String(v || "")
-        .trim()
-        .toUpperCase()
-        .replace(/\s+/g,"")
-        .replace(/—/g,"-");
-    }
+  function normalizeCode(v){
+    return (v||"")
+      .toUpperCase()
+      .replace(/\s+/g,"")
+      .replace(/[^A-Z0-9-]/g,"")
+      .trim();
+  }
 
-    function getDeviceKey(){
-      const k = "sandooq_device_key_v1";
-      let v = localStorage.getItem(k);
-      if (!v){
-        // ثابت للجهاز/المتصفح
-        v = (crypto && crypto.randomUUID) ? crypto.randomUUID() : ("dv-" + Math.random().toString(16).slice(2) + Date.now());
-        localStorage.setItem(k, v);
-      }
-      return v;
-    }
+  function alreadyActivated(){
+    return localStorage.getItem(LS_OK) === "1";
+  }
 
-    function cleanup(){
-      if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; }
-      if (lastScriptTag) {
-        lastScriptTag.remove();
-        lastScriptTag = null;
-      }
-    }
+  function goNext(){
+    location.replace(NEXT_PAGE);
+  }
 
-    // ✅ JSONP call (يحل تعليق Safari/CORS)
-    function jsonp(url, cbName){
-      return new Promise((resolve, reject) => {
-        window[cbName] = (data) => {
-          cleanup();
-          try { delete window[cbName]; } catch(e){}
-          resolve(data);
-        };
+  // ✅ لو الجهاز مفعل من قبل — دخله مباشرة
+  if (alreadyActivated()){
+    goNext();
+  }
 
-        const s = document.createElement("script");
-        s.src = url;
-        s.onerror = () => {
-          cleanup();
-          try { delete window[cbName]; } catch(e){}
-          reject(new Error("network_error"));
-        };
+  // JSONP helper
+  function jsonp(url, cbName){
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      const t = setTimeout(() => {
+        cleanup();
+        reject(new Error("timeout"));
+      }, 15000);
 
-        lastScriptTag = s;
-        document.body.appendChild(s);
-
-        // ✅ تايم آوت يمنع التعليق للأبد
-        timeoutId = setTimeout(() => {
-          cleanup();
-          try { delete window[cbName]; } catch(e){}
-          reject(new Error("timeout"));
-        }, 10000);
-      });
-    }
-
-    async function activate(){
-      if (busy) return;
-
-      const code = normalizeCode(elCode.value);
-      if (!code){
-        setMsg("اكتب الكود أولاً", false);
-        return;
+      function cleanup(){
+        clearTimeout(t);
+        if (s.parentNode) s.parentNode.removeChild(s);
+        try{ delete window[cbName]; }catch(e){ window[cbName]=undefined; }
       }
 
-      showLoading(true);
-      setMsg("جاري التحقق…", false);
-
-      const device = getDeviceKey();
-      const cbName = "__cb_" + Math.random().toString(36).slice(2);
-
-      // رابط JSONP
-      const url = SCRIPT_URL
-        + "?code=" + encodeURIComponent(code)
-        + "&device=" + encodeURIComponent(device)
-        + "&callback=" + encodeURIComponent(cbName)
-        + "&_=" + Date.now(); // منع كاش
-
-      try{
-        const res = await jsonp(url, cbName);
-
-        if (res && res.ok){
-          // خزّن أنه مفعل
-          localStorage.setItem("sandooq_activated_v1", "1");
-          localStorage.setItem("sandooq_code_v1", code);
-
-          setMsg("✅ تم التفعيل", true);
-          showLoading(false);
-
-          // ✅ تحويل تلقائي للعبة
-          setTimeout(() => {
-            window.location.href = NEXT_URL;
-          }, 450);
-
-        } else {
-          const err = (res && (res.error || res.msg)) ? (res.error || res.msg) : "لم يتم التفعيل";
-          setMsg("❌ " + err, false);
-          showLoading(false);
-        }
-
-      } catch(e){
-        // هذا اللي كان يصير عندك (تعليق) — الحين يصير رسالة واضحة
-        if (String(e && e.message) === "timeout") {
-          setMsg("❌ تعذر التحقق الآن (انتهت المهلة). جرّب مره ثانية.", false);
-        } else {
-          setMsg("❌ تعذر التحقق الآن. تأكد من رابط السكربت /exec والإنترنت.", false);
-        }
-        showLoading(false);
-      }
-    }
-
-    elBtn.addEventListener("click", activate);
-    elCode.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") activate();
+      window[cbName] = (data) => { cleanup(); resolve(data); };
+      s.onerror = () => { cleanup(); reject(new Error("network_error")); };
+      s.src = url;
+      document.body.appendChild(s);
     });
-  </script>
+  }
+
+  async function activate(){
+    const code = normalizeCode(codeEl.value);
+    if (!code || code.length < 10){
+      show("err","اكتب كود صحيح.");
+      return;
+    }
+
+    btn.disabled = true;
+    show("wait","جاري التحقق من الكود...");
+
+    const device = getDeviceKey();
+    const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*9999);
+    const url =
+      SCRIPT_URL +
+      "?code=" + encodeURIComponent(code) +
+      "&device=" + encodeURIComponent(device) +
+      "&callback=" + encodeURIComponent(cb) +
+      "&_=" + Date.now();
+
+    try{
+      const res = await jsonp(url, cb);
+
+      if (res && res.ok && res.activated){
+        localStorage.setItem(LS_OK, "1");
+        show("ok","✅ تم التفعيل");
+        setTimeout(goNext, 600);
+      } else {
+        const err = (res && res.error) ? res.error : "unknown";
+        if (err === "code_not_found") show("err","❌ الكود غير موجود.");
+        else if (err === "code_used_on_another_device") show("err","❌ الكود مستخدم على جهاز آخر.");
+        else if (err === "missing_code" || err === "missing_device") show("err","❌ بيانات ناقصة.");
+        else show("err","❌ تعذر التفعيل. ("+ err +")");
+      }
+    }catch(e){
+      show("err","❌ تعذر التحقق الآن. تأكد من رابط السكربت /exec والإنترنت.");
+    }finally{
+      btn.disabled = false;
+    }
+  }
+
+  btn.addEventListener("click", activate);
+  codeEl.addEventListener("input", ()=>{ msg.style.display="none"; msg.className="msg"; });
+  codeEl.addEventListener("keydown", (e)=>{ if(e.key==="Enter") activate(); });
+</script>
 </body>
 </html>
