@@ -1,345 +1,328 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
   <title>تفعيل لعبة تخمين الصور</title>
 
   <style>
     :root{
-      --bg1:#0f3f8f;
-      --bg2:#1f5fb6;
-      --card: rgba(255,255,255,.10);
-      --card2: rgba(255,255,255,.16);
-      --text:#ffffff;
-      --muted: rgba(255,255,255,.65);
-      --yellow:#f4c400;
-      --yellow2:#ffdd55;
-      --black:#111;
-      --ok:#18b26a;
-      --bad:#ff4d4d;
-      --shadow: 0 18px 45px rgba(0,0,0,.35);
-      --radius: 22px;
+      --bg1:#123a7a;
+      --bg2:#1f4fa3;
+      --card:rgba(255,255,255,.10);
+      --frame:rgba(255,255,255,.18);
+      --white:#fff;
+      --black:#0b0b0b;
+      --gold:#f4c400;
+      --gold2:#ffd64a;
+      --danger:#ff5b5b;
+      --ok:#21c55d;
     }
-
     *{box-sizing:border-box}
     body{
       margin:0;
       min-height:100vh;
-      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
-      color:var(--text);
-      background: radial-gradient(1200px 800px at 50% 20%, #2d66c9 0%, var(--bg2) 35%, var(--bg1) 100%);
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 50% 25%, #2a63c8 0%, var(--bg2) 45%, var(--bg1) 100%);
       display:flex;
       align-items:center;
       justify-content:center;
       padding:24px 14px;
+      color:var(--white);
     }
-
-    .frame{
-      width:min(520px, 96vw);
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 28px;
-      padding:22px 18px;
-      box-shadow: var(--shadow);
+    .wrap{
+      width:min(520px, 94vw);
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:22px;
+      padding:22px 16px 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
       position:relative;
       overflow:hidden;
     }
-
     .inner{
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 26px;
-      padding:20px 18px 18px;
-    }
-
-    .logoWrap{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      margin:2px 0 8px;
+      background: rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:20px;
+      padding:18px 14px 16px;
+      text-align:center;
     }
     .logo{
-      width:86px;
-      height:86px;
-      object-fit:contain;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.28));
+      width:64px;height:64px; object-fit:contain;
+      margin:4px auto 10px;
+      display:block;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
+      pointer-events:none;
+      user-select:none;
     }
-
     h1{
-      margin:10px 0 12px;
-      text-align:center;
+      margin:0 0 16px;
       font-size:34px;
-      letter-spacing:.2px;
-      line-height:1.1;
+      line-height:1.2;
       font-weight:900;
+      text-shadow: 0 10px 24px rgba(0,0,0,.25);
     }
-
     .card{
-      background: rgba(255,255,255,.85);
-      border-radius: 18px;
-      padding:18px;
-      color:#111;
-      border: 3px solid rgba(0,0,0,.75);
-      box-shadow: 0 14px 30px rgba(0,0,0,.22);
+      margin:0 auto;
+      width:min(420px, 94%);
+      background:#f2f2f2;
+      border:4px solid #0f0f0f;
+      border-radius:16px;
+      padding:14px 12px 14px;
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,.12), 0 12px 30px rgba(0,0,0,.20);
+      color:var(--black);
     }
-
     .label{
-      text-align:center;
-      font-weight:900;
-      font-size:20px;
+      font-size:18px;
+      font-weight:800;
       margin:0 0 10px;
     }
-
-    .codeInput{
+    input{
       width:100%;
-      border: 3px solid rgba(0,0,0,.75);
-      border-radius: 14px;
-      padding:14px 14px;
-      font-size:20px;
-      font-weight:900;
-      text-align:center;
+      height:54px;
+      border-radius:14px;
+      border:3px solid #1b1b1b;
       outline:none;
-      letter-spacing:2px;
-      text-transform:uppercase;
-      background:#fff;
-    }
-
-    .btn{
-      width:100%;
-      margin-top:12px;
-      border:none;
-      border-radius: 14px;
-      padding:14px 14px;
       font-size:22px;
       font-weight:900;
-      background: linear-gradient(180deg, var(--yellow2) 0%, var(--yellow) 100%);
-      color:#0b3f8c;
+      text-align:center;
+      letter-spacing:1px;
+      padding:0 12px;
+      background:#fff;
+    }
+    .btn{
+      width:100%;
+      height:58px;
+      border-radius:14px;
+      border:3px solid #1b1b1b;
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+      font-size:26px;
+      font-weight:900;
+      margin-top:12px;
       cursor:pointer;
-      box-shadow: 0 12px 20px rgba(0,0,0,.22);
-      border: 3px solid rgba(0,0,0,.65);
+      box-shadow: 0 10px 0 rgba(0,0,0,.22);
+      color:#1565c0;
     }
     .btn:disabled{
-      opacity:.55;
+      opacity:.65;
       cursor:not-allowed;
-      filter: grayscale(.2);
+      filter:saturate(.7);
     }
-
-    .status{
-      margin-top:12px;
-      border-radius: 12px;
-      padding:10px 12px;
-      font-weight:800;
-      text-align:center;
-      display:none;
-    }
-    .status.ok{
-      display:block;
-      background: rgba(24,178,106,.12);
-      border:1px solid rgba(24,178,106,.35);
-      color:#0c7a48;
-    }
-    .status.bad{
-      display:block;
-      background: rgba(255,77,77,.10);
-      border:1px solid rgba(255,77,77,.35);
-      color:#b10f0f;
-    }
-    .status.wait{
-      display:block;
-      background: rgba(0,0,0,.06);
-      border:1px solid rgba(0,0,0,.12);
-      color:#222;
-    }
-
-    .foot{
+    .msg{
       margin-top:14px;
-      text-align:center;
-      font-size:13px;
-      color: var(--muted);
+      min-height:52px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:12px;
+      font-weight:900;
+      padding:10px 12px;
+      background:#fff;
+      border:0;
+      color:#111;
     }
+    .msg.ok{ background: #eafff2; color:#0f7a37; border:2px solid rgba(33,197,93,.35); }
+    .msg.bad{ background: #fff1f1; color:#b00020; border:2px solid rgba(255,91,91,.35); }
 
-    /* Loading overlay */
     .overlay{
-      position:absolute;
-      inset:0;
-      background: rgba(0,0,0,.35);
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.25);
       display:none;
       align-items:center;
       justify-content:center;
-      z-index:20;
-      backdrop-filter: blur(3px);
+      padding:18px;
     }
-    .overlay .pill{
-      background: rgba(255,255,255,.92);
+    .overlay.show{ display:flex; }
+    .toast{
+      background:#fff;
       color:#111;
+      border-radius:14px;
       padding:12px 14px;
-      border-radius: 12px;
       font-weight:900;
-      border:1px solid rgba(0,0,0,.15);
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      box-shadow: 0 14px 35px rgba(0,0,0,.25);
+    }
+
+    .footer{
+      margin-top:14px;
+      font-size:14px;
+      opacity:.85;
+      color:#e9f1ff;
+      text-align:center;
     }
   </style>
 </head>
 
 <body>
-  <div class="frame">
-    <div class="overlay" id="overlay">
-      <div class="pill" id="overlayText">جاري التحقق من الكود...</div>
-    </div>
-
+  <div class="wrap">
     <div class="inner">
-      <div class="logoWrap">
-        <!-- مهم: عندك الملف غالباً اسمه logo.PNG -->
-        <img class="logo" src="logo.PNG" alt="صندوق المسابقات">
-      </div>
+      <!-- ✅ اللوقو (أنت تقول محلوله، خليته موجود) -->
+      <img class="logo" src="logo.png" alt="صندوق المسابقات" />
 
       <h1>تفعيل لعبة تخمين الصور</h1>
 
       <div class="card">
         <div class="label">أدخل كود التفعيل</div>
-        <input id="code" class="codeInput" placeholder="SNDQ-XXXX-XXXX-XXXX" inputmode="latin" autocomplete="off" />
-        <button id="btn" class="btn" disabled>تفعيل</button>
+        <input id="code" placeholder="SNDQ-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters" />
+        <button id="btn" class="btn">تفعيل</button>
 
-        <div id="msg" class="status"></div>
+        <div id="msg" class="msg bad" style="opacity:.65">
+          أدخل الكود ثم اضغط تفعيل
+        </div>
       </div>
 
-      <div class="foot">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
+      <div class="footer">© جميع الحقوق محفوظة لمتجر صندوق المسابقات</div>
+    </div>
+
+    <div id="overlay" class="overlay">
+      <div class="toast">جاري التحقق من الكود…</div>
     </div>
   </div>
 
-<script>
-  /***********************
-   * إعدادات مهمة
-   ***********************/
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwlWNNceDPOcOTwwsDJTTca7qIu-5tDSKtOsMUAXvfANa7uW4YW40fFAp5gAkuTuAU_DQ/exec";
-  const NEXT_PAGE  = "index.html";     // غيّرها لو لعبتك تفتح صفحة ثانية
-  const GAME_KEY   = "guess_images_v1";// مفتاح داخلي للعبة (لا تغيّره)
+  <script>
+    /**************
+     * عدّل هذا السطر فقط:
+     **************/
+    const SCRIPT_URL = "PUT_YOUR_EXEC_URL_HERE"; // مثال: https://script.google.com/macros/s/XXXX/exec
 
-  /***********************/
-  const elCode = document.getElementById("code");
-  const elBtn  = document.getElementById("btn");
-  const elMsg  = document.getElementById("msg");
-  const overlay = document.getElementById("overlay");
-  const overlayText = document.getElementById("overlayText");
+    // وين يروح بعد التفعيل؟ (غيّرها إذا تبغى)
+    const NEXT_URL = "index.html";
 
-  // لو متفعل من قبل -> ادخل اللعبة مباشرة
-  if (localStorage.getItem("SANDOQ_ACTIVATED_" + GAME_KEY) === "1") {
-    location.replace(NEXT_PAGE);
-  }
+    const elCode = document.getElementById("code");
+    const elBtn  = document.getElementById("btn");
+    const elMsg  = document.getElementById("msg");
+    const overlay= document.getElementById("overlay");
 
-  function show(type, text){
-    elMsg.className = "status " + type;
-    elMsg.textContent = text;
-  }
-  function setLoading(on, text){
-    overlay.style.display = on ? "flex" : "none";
-    if (text) overlayText.textContent = text;
-  }
+    let busy = false;
+    let timeoutId = null;
+    let lastScriptTag = null;
 
-  function normalizeCode(v){
-    v = (v || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-    if (!v.startsWith("SNDQ")) {
-      // لو كتب بدون SNDQ نخليه عادي
-    }
-    // شكل: SNDQ-XXXX-XXXX-XXXX
-    // نجبره: 4 + 4 + 4 + 4
-    const parts = [];
-    parts.push(v.slice(0,4));
-    if (v.length > 4) parts.push(v.slice(4,8));
-    if (v.length > 8) parts.push(v.slice(8,12));
-    if (v.length > 12) parts.push(v.slice(12,16));
-    return parts.filter(Boolean).join("-");
-  }
-
-  function isValid(code){
-    return /^SNDQ-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code);
-  }
-
-  function getDeviceKey(){
-    // ثابت للجهاز/المتصفح
-    let k = localStorage.getItem("SANDOQ_DEVICEKEY");
-    if (!k){
-      // بسيط وعملي (ممتاز لمتطلباتك)
-      k = (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "-" + Math.random().toString(16).slice(2));
-      localStorage.setItem("SANDOQ_DEVICEKEY", k);
-    }
-    return k;
-  }
-
-  async function postJSON(url, data){
-    const res = await fetch(url, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(data)
-    });
-    return await res.json();
-  }
-
-  async function getJSON(url, params){
-    const q = new URLSearchParams(params).toString();
-    const res = await fetch(url + (url.includes("?") ? "&" : "?") + q, { method:"GET" });
-    return await res.json();
-  }
-
-  async function activate(){
-    const code = elCode.value.trim();
-    if (!isValid(code)){
-      show("bad", "الكود غير صحيح. تأكد من الصيغة.");
-      return;
+    function setMsg(text, ok){
+      elMsg.textContent = text;
+      elMsg.className = "msg " + (ok ? "ok" : "bad");
+      elMsg.style.opacity = "1";
     }
 
-    setLoading(true, "جاري التحقق من الكود...");
-    show("wait", "جاري التحقق...");
+    function showLoading(on){
+      overlay.classList.toggle("show", !!on);
+      elBtn.disabled = !!on;
+      busy = !!on;
+    }
 
-    const deviceKey = getDeviceKey();
-    const payload = { code, deviceId: deviceKey, deviceKey };
+    function normalizeCode(v){
+      return String(v || "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g,"")
+        .replace(/—/g,"-");
+    }
 
-    try{
-      // نجرب POST أولاً
-      let data;
-      try{
-        data = await postJSON(SCRIPT_URL, payload);
-      }catch(e){
-        // لو POST انرفض نجرب GET
-        data = await getJSON(SCRIPT_URL, payload);
+    function getDeviceKey(){
+      const k = "sandooq_device_key_v1";
+      let v = localStorage.getItem(k);
+      if (!v){
+        // ثابت للجهاز/المتصفح
+        v = (crypto && crypto.randomUUID) ? crypto.randomUUID() : ("dv-" + Math.random().toString(16).slice(2) + Date.now());
+        localStorage.setItem(k, v);
       }
+      return v;
+    }
 
-      if (data && data.ok === true){
-        // حفظ التفعيل
-        localStorage.setItem("SANDOQ_ACTIVATED_" + GAME_KEY, "1");
-        localStorage.setItem("SANDOQ_CODE_" + GAME_KEY, code);
-        show("ok", "✅ تم التفعيل");
+    function cleanup(){
+      if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; }
+      if (lastScriptTag) {
+        lastScriptTag.remove();
+        lastScriptTag = null;
+      }
+    }
 
-        // تحويل للعبة
-        setLoading(true, "جارٍ فتح اللعبة...");
-        setTimeout(() => location.replace(NEXT_PAGE), 600);
+    // ✅ JSONP call (يحل تعليق Safari/CORS)
+    function jsonp(url, cbName){
+      return new Promise((resolve, reject) => {
+        window[cbName] = (data) => {
+          cleanup();
+          try { delete window[cbName]; } catch(e){}
+          resolve(data);
+        };
+
+        const s = document.createElement("script");
+        s.src = url;
+        s.onerror = () => {
+          cleanup();
+          try { delete window[cbName]; } catch(e){}
+          reject(new Error("network_error"));
+        };
+
+        lastScriptTag = s;
+        document.body.appendChild(s);
+
+        // ✅ تايم آوت يمنع التعليق للأبد
+        timeoutId = setTimeout(() => {
+          cleanup();
+          try { delete window[cbName]; } catch(e){}
+          reject(new Error("timeout"));
+        }, 10000);
+      });
+    }
+
+    async function activate(){
+      if (busy) return;
+
+      const code = normalizeCode(elCode.value);
+      if (!code){
+        setMsg("اكتب الكود أولاً", false);
         return;
       }
 
-      const err = (data && (data.error || data.msg)) ? (data.error || data.msg) : "تعذر التحقق. تأكد من الإنترنت أو رابط السكربت.";
-      show("bad", "❌ " + err);
-      setLoading(false);
+      showLoading(true);
+      setMsg("جاري التحقق…", false);
 
-    }catch(err){
-      show("bad", "❌ تعذر التحقق الآن. تأكد من الإنترنت أو رابط السكربت.");
-      setLoading(false);
+      const device = getDeviceKey();
+      const cbName = "__cb_" + Math.random().toString(36).slice(2);
+
+      // رابط JSONP
+      const url = SCRIPT_URL
+        + "?code=" + encodeURIComponent(code)
+        + "&device=" + encodeURIComponent(device)
+        + "&callback=" + encodeURIComponent(cbName)
+        + "&_=" + Date.now(); // منع كاش
+
+      try{
+        const res = await jsonp(url, cbName);
+
+        if (res && res.ok){
+          // خزّن أنه مفعل
+          localStorage.setItem("sandooq_activated_v1", "1");
+          localStorage.setItem("sandooq_code_v1", code);
+
+          setMsg("✅ تم التفعيل", true);
+          showLoading(false);
+
+          // ✅ تحويل تلقائي للعبة
+          setTimeout(() => {
+            window.location.href = NEXT_URL;
+          }, 450);
+
+        } else {
+          const err = (res && (res.error || res.msg)) ? (res.error || res.msg) : "لم يتم التفعيل";
+          setMsg("❌ " + err, false);
+          showLoading(false);
+        }
+
+      } catch(e){
+        // هذا اللي كان يصير عندك (تعليق) — الحين يصير رسالة واضحة
+        if (String(e && e.message) === "timeout") {
+          setMsg("❌ تعذر التحقق الآن (انتهت المهلة). جرّب مره ثانية.", false);
+        } else {
+          setMsg("❌ تعذر التحقق الآن. تأكد من رابط السكربت /exec والإنترنت.", false);
+        }
+        showLoading(false);
+      }
     }
-  }
 
-  elCode.addEventListener("input", () => {
-    const v = normalizeCode(elCode.value);
-    elCode.value = v;
-    elBtn.disabled = !isValid(v);
-    elMsg.style.display = "none";
-  });
-
-  elBtn.addEventListener("click", activate);
-
-  // Enter
-  elCode.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !elBtn.disabled) activate();
-  });
-</script>
+    elBtn.addEventListener("click", activate);
+    elCode.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") activate();
+    });
+  </script>
 </body>
 </html>
