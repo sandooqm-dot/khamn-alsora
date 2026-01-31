@@ -7,10 +7,10 @@
 
   <style>
     :root{
-      --bg:#0f3d9a;         /* أزرق صندوق */
+      --bg:#0f3d9a;
       --bg2:#0b2f78;
       --card:#ffffff;
-      --yellow:#f4c400;     /* أصفر صندوق */
+      --yellow:#f4c400;
       --text:#111;
       --muted:#6b6b6b;
       --stroke:#000;
@@ -157,7 +157,6 @@
       white-space: nowrap;
     }
 
-    /* شاشة تحميل خفيفة */
     .overlay{
       position:fixed; inset:0;
       background: rgba(0,0,0,.25);
@@ -195,7 +194,7 @@
 
     <div class="card">
       <div class="label">أدخل كود التفعيل</div>
-      <input id="codeInput" class="input" placeholder="مثال: ABCD-1234" autocomplete="off" inputmode="latin" />
+      <input id="codeInput" class="input" placeholder="مثال: SNDQ-ABCD-EFGH-JKLM" autocomplete="off" inputmode="latin" />
 
       <button id="btnActivate" class="btn btnActivate" type="button" disabled>تفعيل</button>
       <button id="btnBuy" class="btn btnBuy" type="button">لشراء اللعبة اضغط هنا</button>
@@ -217,15 +216,15 @@
 
   <script>
     // =========================
-    // إعدادات التفعيل
+    // إعدادات التفعيل (لعبة تخمين الصور)
     // =========================
-    const GAME_KEY = "khamn"; // معرف اللعبة (مهم في السكربت)
+    const GAME_KEY = "khamn"; // اختياري (السكربت يشتغل حتى لو فاضي)
     const STORAGE_OK = "khamn_activated";
     const STORAGE_CODE = "khamn_code";
     const STORAGE_DEVICE = "khamn_deviceId";
 
-    // ✅ رابط Apps Script /exec (تم تركيبه)
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxO38N5RFLE-pWomdYblY_UTnBOoDZneS2KrARGxnG-4Qw1iZFl_KjxuKW3pstObWbU2g/exec";
+    // ✅ رابط السكربت الجديد (exec)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6_CHz-E7STSB6fKpj4CHlM-Kqnt0Kn1E2tA9_7MLFkIeQHPwsFIRy76Qg5qIK1AV0pA/exec";
 
     const $ = (id)=>document.getElementById(id);
 
@@ -242,7 +241,7 @@
         .trim()
         .replace(/\s+/g,"")
         .replace(/[^\w\-]/g,"")
-        .slice(0, 40)
+        .slice(0, 60)
         .toUpperCase();
     }
 
@@ -256,7 +255,7 @@
     }
 
     function gotoGame(){
-      // بعد التفعيل نوديه لصفحة اللوبي (index.html)
+      // بعد التفعيل نوديه لصفحة اللوبي
       location.replace("index.html");
     }
 
@@ -308,11 +307,10 @@
         const data = await res.json().catch(()=> ({}));
 
         if(!res.ok){
-          throw new Error(data && data.error ? data.error : "فشل الاتصال");
+          throw new Error((data && data.error) ? data.error : "فشل الاتصال");
         }
 
         if(data && data.ok === true){
-          // حفظ التفعيل
           localStorage.setItem(STORAGE_OK, "1");
           localStorage.setItem(STORAGE_CODE, code);
           localStorage.setItem(STORAGE_DEVICE, deviceId);
@@ -323,11 +321,10 @@
           return;
         }
 
-        // رفض
         const err = (data && (data.error || data.message)) || "الكود غير صحيح أو مستخدم";
         setMsg("❌ " + err, "err");
       }catch(e){
-        setMsg("❌ تعذر التحقق الآن. تأكد من الإنترنت أو رابط السكربت.", "err");
+        setMsg("❌ تعذر التحقق الآن. تأكد من الإنترنت.", "err");
       }finally{
         hideOverlay();
         btnActivate.disabled = !(cleanCode(codeInput.value).length >= 4);
