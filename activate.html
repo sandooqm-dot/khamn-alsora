@@ -224,8 +224,8 @@
     const STORAGE_CODE = "khamn_code";
     const STORAGE_DEVICE = "khamn_deviceId";
 
-    // 🔴 هنا نحط رابط Apps Script /exec لاحقاً
-    const SCRIPT_URL = "PUT_YOUR_SCRIPT_EXEC_URL_HERE";
+    // ✅ رابط Apps Script /exec (تم تركيبه)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxO38N5RFLE-pWomdYblY_UTnBOoDZneS2KrARGxnG-4Qw1iZFl_KjxuKW3pstObWbU2g/exec";
 
     const $ = (id)=>document.getElementById(id);
 
@@ -293,11 +293,6 @@
       const code = cleanCode(codeInput.value);
       if(code.length < 4) return;
 
-      if(!SCRIPT_URL || SCRIPT_URL.includes("PUT_YOUR_SCRIPT_EXEC_URL_HERE")){
-        setMsg("⚠️ رابط التحقق غير مضاف بعد. (بنركّبه مع بعض بالخطوة الجاية)", "err");
-        return;
-      }
-
       const deviceId = getDeviceId();
 
       btnActivate.disabled = true;
@@ -344,4 +339,4 @@
 </body>
 </html>
 
-<!-- اسم النسخة: activate.html (تخمين الصور) – إصدار 1 -->
+<!-- اسم النسخة: activate.html (تخمين الصور) – إصدار 2 -->
